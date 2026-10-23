@@ -1,0 +1,7 @@
+# Render blueprint: one free web service running classif-mcp from the Dockerfile.
+services:
+  - type: web
+    name: classif-mcp
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
