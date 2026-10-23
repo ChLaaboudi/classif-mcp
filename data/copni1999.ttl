@@ -1,0 +1,400 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xkos: <http://rdf-vocabulary.ddialliance.org/xkos#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+
+<http://classif-mcp.local/unsd/copni1999/scheme> a skos:ConceptScheme ;
+    skos:prefLabel "COPNI 1999"@en ;
+    skos:note "Classification converted from a published file by classif-mcp. Not an official linked-data publication; check against the source file."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COPNI_English_structure.txt> .
+
+<http://classif-mcp.local/unsd/copni1999/01> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "01" ;
+    skos:prefLabel "Housing"@en ;
+    skos:topConceptOf <http://classif-mcp.local/unsd/copni1999/scheme> .
+
+<http://classif-mcp.local/unsd/copni1999/01.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "01.0" ;
+    skos:prefLabel "Housing"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/01> .
+
+<http://classif-mcp.local/unsd/copni1999/01.0.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "01.0.0" ;
+    skos:prefLabel "Housing"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/01.0> .
+
+<http://classif-mcp.local/unsd/copni1999/02> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "02" ;
+    skos:prefLabel "Health"@en ;
+    skos:topConceptOf <http://classif-mcp.local/unsd/copni1999/scheme> .
+
+<http://classif-mcp.local/unsd/copni1999/02.1> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "02.1" ;
+    skos:prefLabel "Medical products, appliances and equipment"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/02> .
+
+<http://classif-mcp.local/unsd/copni1999/02.1.1> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "02.1.1" ;
+    skos:prefLabel "Pharmaceutical products"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/02.1> .
+
+<http://classif-mcp.local/unsd/copni1999/02.1.2> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "02.1.2" ;
+    skos:prefLabel "Other medical products"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/02.1> .
+
+<http://classif-mcp.local/unsd/copni1999/02.1.3> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "02.1.3" ;
+    skos:prefLabel "Therapeutic appliances and equipment"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/02.1> .
+
+<http://classif-mcp.local/unsd/copni1999/02.2> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "02.2" ;
+    skos:prefLabel "Outpatient services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/02> .
+
+<http://classif-mcp.local/unsd/copni1999/02.2.1> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "02.2.1" ;
+    skos:prefLabel "Medical services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/02.2> .
+
+<http://classif-mcp.local/unsd/copni1999/02.2.2> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "02.2.2" ;
+    skos:prefLabel "Dental services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/02.2> .
+
+<http://classif-mcp.local/unsd/copni1999/02.2.3> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "02.2.3" ;
+    skos:prefLabel "Paramedical services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/02.2> .
+
+<http://classif-mcp.local/unsd/copni1999/02.3> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "02.3" ;
+    skos:prefLabel "Hospital services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/02> .
+
+<http://classif-mcp.local/unsd/copni1999/02.3.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "02.3.0" ;
+    skos:prefLabel "Hospital services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/02.3> .
+
+<http://classif-mcp.local/unsd/copni1999/02.4> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "02.4" ;
+    skos:prefLabel "Public health services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/02> .
+
+<http://classif-mcp.local/unsd/copni1999/02.4.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "02.4.0" ;
+    skos:prefLabel "Public health services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/02.4> .
+
+<http://classif-mcp.local/unsd/copni1999/02.5> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "02.5" ;
+    skos:prefLabel "R&D Health"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/02> .
+
+<http://classif-mcp.local/unsd/copni1999/02.5.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "02.5.0" ;
+    skos:prefLabel "R&D Health"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/02.5> .
+
+<http://classif-mcp.local/unsd/copni1999/02.6> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "02.6" ;
+    skos:prefLabel "Other health services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/02> .
+
+<http://classif-mcp.local/unsd/copni1999/02.6.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "02.6.0" ;
+    skos:prefLabel "Other health services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/02.6> .
+
+<http://classif-mcp.local/unsd/copni1999/03> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "03" ;
+    skos:prefLabel "Recreation and culture"@en ;
+    skos:topConceptOf <http://classif-mcp.local/unsd/copni1999/scheme> .
+
+<http://classif-mcp.local/unsd/copni1999/03.1> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "03.1" ;
+    skos:prefLabel "Recreational and sporting services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/03> .
+
+<http://classif-mcp.local/unsd/copni1999/03.1.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "03.1.0" ;
+    skos:prefLabel "Recreational and sporting services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/03.1> .
+
+<http://classif-mcp.local/unsd/copni1999/03.2> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "03.2" ;
+    skos:prefLabel "Cultural services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/03> .
+
+<http://classif-mcp.local/unsd/copni1999/03.2.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "03.2.0" ;
+    skos:prefLabel "Cultural services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/03.2> .
+
+<http://classif-mcp.local/unsd/copni1999/04> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "04" ;
+    skos:prefLabel "Education"@en ;
+    skos:topConceptOf <http://classif-mcp.local/unsd/copni1999/scheme> .
+
+<http://classif-mcp.local/unsd/copni1999/04.1> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "04.1" ;
+    skos:prefLabel "Pre-primary and primary education"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/04> .
+
+<http://classif-mcp.local/unsd/copni1999/04.1.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "04.1.0" ;
+    skos:prefLabel "Pre-primary and primary education"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/04.1> .
+
+<http://classif-mcp.local/unsd/copni1999/04.2> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "04.2" ;
+    skos:prefLabel "Secondary education"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/04> .
+
+<http://classif-mcp.local/unsd/copni1999/04.2.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "04.2.0" ;
+    skos:prefLabel "Secondary education"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/04.2> .
+
+<http://classif-mcp.local/unsd/copni1999/04.3> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "04.3" ;
+    skos:prefLabel "Post-secondary non-tertiary education"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/04> .
+
+<http://classif-mcp.local/unsd/copni1999/04.3.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "04.3.0" ;
+    skos:prefLabel "Post-secondary non-tertiary education"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/04.3> .
+
+<http://classif-mcp.local/unsd/copni1999/04.4> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "04.4" ;
+    skos:prefLabel "Tertiary education"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/04> .
+
+<http://classif-mcp.local/unsd/copni1999/04.4.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "04.4.0" ;
+    skos:prefLabel "Tertiary education"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/04.4> .
+
+<http://classif-mcp.local/unsd/copni1999/04.5> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "04.5" ;
+    skos:prefLabel "Education not definable by level"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/04> .
+
+<http://classif-mcp.local/unsd/copni1999/04.5.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "04.5.0" ;
+    skos:prefLabel "Education not definable by level"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/04.5> .
+
+<http://classif-mcp.local/unsd/copni1999/04.6> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "04.6" ;
+    skos:prefLabel "R&D Education"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/04> .
+
+<http://classif-mcp.local/unsd/copni1999/04.6.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "04.6.0" ;
+    skos:prefLabel "R&D Education"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/04.6> .
+
+<http://classif-mcp.local/unsd/copni1999/04.7> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "04.7" ;
+    skos:prefLabel "Other educational services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/04> .
+
+<http://classif-mcp.local/unsd/copni1999/04.7.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "04.7.0" ;
+    skos:prefLabel "Other educational services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/04.7> .
+
+<http://classif-mcp.local/unsd/copni1999/05> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "05" ;
+    skos:prefLabel "Social protection"@en ;
+    skos:topConceptOf <http://classif-mcp.local/unsd/copni1999/scheme> .
+
+<http://classif-mcp.local/unsd/copni1999/05.1> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "05.1" ;
+    skos:prefLabel "Social protection services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/05> .
+
+<http://classif-mcp.local/unsd/copni1999/05.1.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "05.1.0" ;
+    skos:prefLabel "Social protection services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/05.1> .
+
+<http://classif-mcp.local/unsd/copni1999/05.2> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "05.2" ;
+    skos:prefLabel "R&D Social protection"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/05> .
+
+<http://classif-mcp.local/unsd/copni1999/05.2.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "05.2.0" ;
+    skos:prefLabel "R&D Social protection"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/05.2> .
+
+<http://classif-mcp.local/unsd/copni1999/06> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "06" ;
+    skos:prefLabel "Religion"@en ;
+    skos:topConceptOf <http://classif-mcp.local/unsd/copni1999/scheme> .
+
+<http://classif-mcp.local/unsd/copni1999/06.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "06.0" ;
+    skos:prefLabel "Religion"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/06> .
+
+<http://classif-mcp.local/unsd/copni1999/06.0.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "06.0.0" ;
+    skos:prefLabel "Religion"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/06.0> .
+
+<http://classif-mcp.local/unsd/copni1999/07> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "07" ;
+    skos:prefLabel "Political parties, labour and professional organizations"@en ;
+    skos:topConceptOf <http://classif-mcp.local/unsd/copni1999/scheme> .
+
+<http://classif-mcp.local/unsd/copni1999/07.1> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "07.1" ;
+    skos:prefLabel "Services of political parties"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/07> .
+
+<http://classif-mcp.local/unsd/copni1999/07.1.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "07.1.0" ;
+    skos:prefLabel "Services of political parties"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/07.1> .
+
+<http://classif-mcp.local/unsd/copni1999/07.2> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "07.2" ;
+    skos:prefLabel "Services of labour organizations"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/07> .
+
+<http://classif-mcp.local/unsd/copni1999/07.2.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "07.2.0" ;
+    skos:prefLabel "Services of labour organizations"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/07.2> .
+
+<http://classif-mcp.local/unsd/copni1999/07.3> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "07.3" ;
+    skos:prefLabel "Services of professional organizations"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/07> .
+
+<http://classif-mcp.local/unsd/copni1999/07.3.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "07.3.0" ;
+    skos:prefLabel "Services of professional organizations"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/07.3> .
+
+<http://classif-mcp.local/unsd/copni1999/08> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "08" ;
+    skos:prefLabel "Environmental protection"@en ;
+    skos:topConceptOf <http://classif-mcp.local/unsd/copni1999/scheme> .
+
+<http://classif-mcp.local/unsd/copni1999/08.1> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "08.1" ;
+    skos:prefLabel "Environmental protection services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/08> .
+
+<http://classif-mcp.local/unsd/copni1999/08.1.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "08.1.0" ;
+    skos:prefLabel "Environmental protection services"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/08.1> .
+
+<http://classif-mcp.local/unsd/copni1999/08.2> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "08.2" ;
+    skos:prefLabel "R&D Environmental protection"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/08> .
+
+<http://classif-mcp.local/unsd/copni1999/08.2.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "08.2.0" ;
+    skos:prefLabel "R&D Environmental protection"@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/08.2> .
+
+<http://classif-mcp.local/unsd/copni1999/09> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "09" ;
+    skos:prefLabel "Services n.e.c."@en ;
+    skos:topConceptOf <http://classif-mcp.local/unsd/copni1999/scheme> .
+
+<http://classif-mcp.local/unsd/copni1999/09.1> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "09.1" ;
+    skos:prefLabel "Services n.e.c."@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/09> .
+
+<http://classif-mcp.local/unsd/copni1999/09.1.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "09.1.0" ;
+    skos:prefLabel "Services n.e.c."@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/09.1> .
+
+<http://classif-mcp.local/unsd/copni1999/09.2> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "09.2" ;
+    skos:prefLabel "R&D Services n.e.c."@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/09> .
+
+<http://classif-mcp.local/unsd/copni1999/09.2.0> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/copni1999/scheme> ;
+    skos:notation "09.2.0" ;
+    skos:prefLabel "R&D Services n.e.c."@en ;
+    skos:broader <http://classif-mcp.local/unsd/copni1999/09.2> .

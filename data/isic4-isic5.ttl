@@ -6,7 +6,7 @@
 
 <http://classif-mcp.local/unsd/correspondence/isic4-isic5> a xkos:Correspondence ;
     skos:prefLabel "ISIC Rev. 4 - ISIC Rev. 5"@en ;
-    skos:note "Correspondence table converted from a UNSD file by classif-mcp. Not an official linked-data publication; check against the source file."@en ;
+    skos:note "Correspondence table converted from a published file by classif-mcp. Not an official linked-data publication; check against the source file."@en ;
     dct:source <https://unstats.un.org/unsd/classifications/Econ/tables/ISIC/ISIC_Rev4_to_ISIC_Rev5_Correspondence_Table-17Jan2025.xlsx> .
 
 <http://classif-mcp.local/unsd/correspondence/isic4-isic5/0> a xkos:ConceptAssociation ;

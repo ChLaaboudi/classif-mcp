@@ -1,34 +1,48 @@
-"""Convert UNSD classification files (CSV / Excel) to SKOS/XKOS Turtle.
+"""Convert classification files (CSV, TXT, XLSX, XLS, JSON) to SKOS/XKOS Turtle.
 
-UNSD publishes ISIC Rev. 5, CPC Ver. 3.0 and their correspondence tables as
-CSV/Excel, not as linked data. This converter turns them into Turtle that
-classif-mcp serves as a "local" endpoint, so the same tools work across
-Caliper, Cellar, INSEE and these files.
+Tier 2 of the classif-mcp logic: a classification that is not published as
+RDF but as a structured file is converted once, then served by classif-mcp as
+a type = "local" endpoint with the same tools as the SPARQL endpoints.
 
 Provenance is explicit: every generated scheme or correspondence carries
-dct:source (the UNSD file URL) and a note that it is a conversion, not an
-official LOD publication. URIs are minted under a base you choose; the default
-is a local namespace, so that no URI is minted on UNSD's behalf.
+dct:source (the file URL) and a note saying how it was produced. URIs are
+minted under a base you choose; the default is a local namespace, so that no
+URI is minted on the publisher's behalf.
 
 Usage
 -----
-  # A classification (structure file)
-  classif-unsd scheme ISIC_Rev_5_english_structure.csv \
-      --id isic-rev5 --label "ISIC Rev. 5" \
-      --source-url https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/ISIC_Rev_5_english_structure.csv \
-      -o data/isic-rev5.ttl
+  # A classification
+  classif-unsd scheme ISIC_Rev_5_english_structure.csv --id isic-rev5 --label "ISIC Rev. 5" \
+      --source-url https://unstats.un.org/... -o data/isic-rev5.ttl
 
   # A correspondence table
-  classif-unsd correspondence ISIC_Rev4_to_ISIC_Rev5_Correspondence_Table-17Jan2025.xlsx \
-      --id isic4-isic5 --label "ISIC Rev. 4 - ISIC Rev. 5" \
-      --source-base http://classif-mcp.local/unsd/isic-rev4/ \
-      --target-base http://classif-mcp.local/unsd/isic-rev5/ \
-      -o data/isic4-isic5.ttl
+  classif-unsd correspondence ISIC_Rev4_to_ISIC_Rev5.xlsx --id isic4-isic5 \
+      --label "ISIC Rev. 4 - ISIC Rev. 5" \
+      --source-col "ISIC Rev. 4 Code" --target-col "ISIC Rev. 5 Code" \
+      --note-col "Type of change in GSIM (blank means no change)" \
+      --source-base https://unstats.un.org/classifications/ISIC/rev4/ \
+      --target-base http://classif-mcp.local/unsd/isic-rev5/ -o data/isic4-isic5.ttl
 
-Column detection is automatic (first column whose header mentions "code",
-then "title"/"description"/"label"); override with --code-col / --label-col,
-or --source-col / --target-col for correspondences. Run with --dry-run first
-to see which columns and how many rows were detected.
+Options for awkward files
+-------------------------
+  --no-header            the file has no header row; give columns by index (0, 1, ...)
+  --sheet NAME           Excel sheet (default: first)
+  --filter-col/--filter-value
+                         keep only rows where that column equals the value
+                         (combined workbooks holding several versions)
+  --fill-down COLS       comma-separated columns whose blank cells repeat the
+                         value above (grouped correspondence tables)
+  --parent-col COL       take each item's parent from a column instead of the code
+  --key-style dotted     keep separators in codes (EBOPS 3.2.1, COICOP 01.1.1);
+                         default "compact" strips them (ISIC 0111, CPC 01111)
+  --notes SPEC           explanatory-note columns written as XKOS notes, e.g.
+                         "intro=core,includes=inclusion,alsoIncludes=additional,excludes=exclusion"
+  Fixed-width TXT files ("Code   Description", as for COFOG) are detected automatically.
+  JSON (UN Comtrade reference files: {"results": [{"id", "text", "parent"}]})
+                         is read directly; keys are detected, or set them with
+                         --code-col / --label-col / --parent-col.
+
+Run with --dry-run first to see which columns and how many rows were detected.
 """
 
 from __future__ import annotations
@@ -36,6 +50,7 @@ from __future__ import annotations
 import argparse
 import csv
 import io
+import json
 import re
 import sys
 from pathlib import Path
@@ -46,14 +61,42 @@ DEFAULT_BASE = "http://classif-mcp.local/unsd/"
 # --------------------------------------------------------------------------- reading
 
 
-def read_table(path: Path, sheet: str | None = None) -> tuple[list[str], list[list[str]]]:
-    """Return (header, rows) from a CSV/TXT or XLSX file."""
-    if path.suffix.lower() in (".xlsx", ".xlsm"):
+def _cell(v) -> str:
+    if v is None:
+        return ""
+    if isinstance(v, float) and v.is_integer():
+        return str(int(v))
+    return str(v).strip()
+
+
+def _read_json(path: Path) -> tuple[list[str], list[list[str]]]:
+    data = json.loads(path.read_text(encoding="utf-8-sig"))
+    if isinstance(data, dict):
+        lists = [v for v in data.values() if isinstance(v, list) and v and isinstance(v[0], dict)]
+        if not lists:
+            sys.exit("No list of records found in the JSON file.")
+        data = lists[0]
+    header = list(dict.fromkeys(k for rec in data for k in rec))
+    return header, [[_cell(rec.get(k)) for k in header] for rec in data]
+
+
+def read_table(path: Path, sheet: str | None = None, no_header: bool = False) -> tuple[list[str], list[list[str]]]:
+    """Return (header, rows) from a CSV/TXT, XLSX, XLS or JSON file."""
+    suffix = path.suffix.lower()
+    if suffix == ".json":
+        return _read_json(path)
+    if suffix in (".xlsx", ".xlsm"):
         import openpyxl
 
         wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
         ws = wb[sheet] if sheet else wb.worksheets[0]
-        all_rows = [["" if v is None else str(v).strip() for v in r] for r in ws.iter_rows(values_only=True)]
+        all_rows = [[_cell(v) for v in r] for r in ws.iter_rows(values_only=True)]
+    elif suffix == ".xls":
+        import xlrd
+
+        wb = xlrd.open_workbook(str(path))
+        ws = wb.sheet_by_name(sheet) if sheet else wb.sheet_by_index(0)
+        all_rows = [[_cell(v) for v in ws.row_values(i)] for i in range(ws.nrows)]
     else:
         raw = path.read_bytes()
         for enc in ("utf-8-sig", "cp1252", "latin-1"):
@@ -62,11 +105,21 @@ def read_table(path: Path, sheet: str | None = None) -> tuple[list[str], list[li
                 break
             except UnicodeDecodeError:
                 continue
-        dialect = csv.Sniffer().sniff(text[:5000], delimiters=",;\t|")
-        all_rows = [[c.strip() for c in r] for r in csv.reader(io.StringIO(text), dialect)]
+        first = next((l for l in text.splitlines() if l.strip()), "")
+        if suffix == ".txt" and not re.search(r"[,;\t|]", first) and re.search(r"\S\s{2,}\S", first):
+            # fixed-width "Code          Description" layout (UNSD COFOG, COPNI, COPP, COICOP 1999)
+            all_rows = [re.split(r"\s{2,}", l.strip(), maxsplit=1) for l in text.splitlines() if l.strip()]
+        else:
+            try:
+                dialect = csv.Sniffer().sniff(text[:5000], delimiters=",;\t|")
+            except csv.Error:
+                dialect = csv.excel
+            all_rows = [[c.strip() for c in r] for r in csv.reader(io.StringIO(text), dialect)]
     all_rows = [r for r in all_rows if any(r)]
-    # header = first row that has a cell mentioning "code"
-    for i, r in enumerate(all_rows[:20]):
+    if no_header:
+        width = max(len(r) for r in all_rows)
+        return [str(i) for i in range(width)], all_rows
+    for i, r in enumerate(all_rows[:20]):  # header = first row mentioning "code"
         if any("code" in c.lower() for c in r):
             return r, all_rows[i + 1:]
     return all_rows[0], all_rows[1:]
@@ -74,11 +127,11 @@ def read_table(path: Path, sheet: str | None = None) -> tuple[list[str], list[li
 
 def pick(header: list[str], wanted: str | None, patterns: list[str], skip: set[int] = frozenset()) -> int:
     if wanted is not None:
-        if wanted.isdigit():
-            return int(wanted)
         for i, h in enumerate(header):
             if h.lower() == wanted.lower():
                 return i
+        if wanted.isdigit() and int(wanted) < len(header):
+            return int(wanted)
         sys.exit(f"Column {wanted!r} not found in header {header}")
     for pat in patterns:  # prefer plain code columns over e.g. "Code including Section"
         for pass_ in (0, 1):
@@ -89,6 +142,44 @@ def pick(header: list[str], wanted: str | None, patterns: list[str], skip: set[i
                     continue
                 return i
     sys.exit(f"Could not detect a column matching {patterns} in header {header}; use an override option.")
+
+
+def prepare_rows(rows: list[list[str]], header: list[str], filter_col: str | None, filter_value: str | None,
+                 fill_down: str | None) -> list[list[str]]:
+    if filter_col:
+        fi = pick(header, filter_col, [])
+        rows = [r for r in rows if len(r) > fi and r[fi] == (filter_value or "")]
+    if fill_down:
+        cols = [pick(header, c.strip(), []) for c in fill_down.split(",") if c.strip()]
+        last: dict[int, str] = {}
+        out = []
+        for r in rows:
+            r = list(r) + [""] * (len(header) - len(r))
+            for c in cols:
+                if r[c]:
+                    last[c] = r[c]
+                else:
+                    r[c] = last.get(c, "")
+            out.append(r)
+        rows = out
+    return rows
+
+
+# --------------------------------------------------------------------------- codes
+
+
+def code_key(code: str, style: str = "compact") -> str:
+    """URI-safe key of a code. compact: '01.1.1' -> '0111'; dotted: '6.1.1 a' -> '6.1.1.a'."""
+    code = (code or "").strip()
+    if style == "dotted":
+        key = re.sub(r"[^0-9A-Za-z]+", ".", code).strip(".")
+        return key
+    return re.sub(r"[^0-9A-Za-z]", "", code)
+
+
+def strip_code_prefix(label: str, code: str) -> str:
+    """'01 - Animals; live' -> 'Animals; live' (Comtrade-style labels)."""
+    return re.sub(rf"^\s*{re.escape(code)}\s*[-–:]\s*", "", label)
 
 
 # --------------------------------------------------------------------------- turtle
@@ -102,58 +193,111 @@ TTL_PREFIXES = """@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
 
 def lit(s: str) -> str:
-    return '"' + s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ").strip() + '"'
+    return '"' + s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ").replace("\r", " ").strip() + '"'
 
 
-def code_key(code: str) -> str:
-    return re.sub(r"[^0-9A-Za-z]", "", code)
+def lit_text(s: str) -> str:
+    """Literal keeping line breaks (explanatory notes often hold lists)."""
+    s = s.replace("\r\n", "\n").replace("\r", "\n").strip()
+    return '"' + s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n") + '"'
 
 
-def provenance(source_url: str | None, what: str) -> str:
-    note = (f"{what} converted from a UNSD file by classif-mcp. "
-            "Not an official linked-data publication; check against the source file.")
+# column-name -> XKOS explanatory note type, for --notes "intro=core,includes=inclusion,..."
+NOTE_TYPES = {"core": "coreContentNote", "additional": "additionalContentNote",
+              "inclusion": "inclusionNote", "exclusion": "exclusionNote"}
+
+
+def parse_notes(spec, header: list[str]) -> list[tuple[int, str]]:
+    """'intro=core,excludes=exclusion' (or a dict) -> [(column index, xkos property)]."""
+    if not spec:
+        return []
+    pairs = spec.items() if isinstance(spec, dict) else (p.split("=", 1) for p in spec.split(",") if "=" in p)
+    out = []
+    for col, kind in pairs:
+        kind = kind.strip().lower().replace("note", "").replace("content", "")
+        if kind not in NOTE_TYPES:
+            raise ConversionError(f"unknown note type {kind!r}; use one of {sorted(NOTE_TYPES)}")
+        out.append((pick(header, col.strip(), []), NOTE_TYPES[kind]))
+    return out
+
+
+def provenance(source_url: str | None, what: str, note: str | None = None) -> str:
+    note = note or (f"{what} converted from a published file by classif-mcp. "
+                    "Not an official linked-data publication; check against the source file.")
     out = f"    skos:note {lit(note)}@en"
     if source_url:
         out += f" ;\n    dct:source <{source_url}>"
     return out
 
 
-def build_scheme(header, rows, code_i, label_i, base, sid, label, lang, source_url) -> tuple[str, int]:
+def build_scheme(rows, code_i, label_i, base, sid, label, lang, source_url,
+                 parent_i: int | None = None, key_style: str = "compact",
+                 prov_note: str | None = None, key_i: int | None = None, note_i: int | None = None,
+                 scheme_extra: str = "", notes: list[tuple[int, str]] | None = None) -> tuple[str, int]:
+    """key_i: column holding an explicit URI key (used when the source prints the
+    same code twice); note_i: column written as skos:editorialNote on each item;
+    scheme_extra: extra Turtle predicate-object lines for the scheme;
+    notes: [(column, xkos property)] written as xkos:ExplanatoryNote resources."""
+    notes = notes or []
     scheme = f"<{base}{sid}/scheme>"
     out = [TTL_PREFIXES, f"{scheme} a skos:ConceptScheme ;\n    skos:prefLabel {lit(label)}@{lang} ;\n"
-           f"{provenance(source_url, 'Classification')} .\n"]
-    seen: list[str] = []
-    last_section: str | None = None
-    n = 0
+           f"{provenance(source_url, 'Classification', prov_note)}{scheme_extra} .\n"]
+    items: list[tuple] = []  # (key, code, title, parent_raw, note, [(xkos property, text)])
     for r in rows:
         if len(r) <= max(code_i, label_i):
             continue
-        code, title = r[code_i].strip(), r[label_i].strip()
-        k = code_key(code)
+        code = r[code_i].strip()
+        k = (r[key_i].strip() if key_i is not None and len(r) > key_i and r[key_i].strip()
+             else code_key(code, key_style))
         if not k:
             continue
-        uri = f"<{base}{sid}/{k}>"
-        # parent = longest earlier code that is a prefix; else the last section letter
+        title = strip_code_prefix(r[label_i].strip(), code)
+        praw = r[parent_i].strip() if parent_i is not None and len(r) > parent_i else ""
+        note = r[note_i].strip() if note_i is not None and len(r) > note_i else ""
+        xnotes = [(prop, r[ci].strip()) for ci, prop in notes
+                  if len(r) > ci and r[ci].strip() and r[ci].strip().lower() != "none"]
+        items.append((k, code, title, praw, note, xnotes))
+    keys = {k for k, *_ in items}
+    seen: list[str] = []
+    last_section: str | None = None
+    n = 0
+    for k, code, title, praw, note, xnotes in items:
         parent = None
-        if k.isalpha():
-            last_section = k
+        if parent_i is not None:
+            pk = code_key(praw, key_style)
+            parent = pk if pk in keys and pk != k else None
+        elif key_style == "dotted":
+            segs = k.split(".")
+            while len(segs) > 1 and parent is None:
+                segs = segs[:-1]
+                cand = ".".join(segs)
+                parent = cand if cand in keys else None
         else:
-            pref = [s for s in seen if k.startswith(s) and s != k and not s.isalpha()]
-            parent = max(pref, key=len) if pref else last_section
+            if k.isalpha():
+                last_section = k
+            else:
+                pref = [s for s in seen if k.startswith(s) and s != k and not s.isalpha()]
+                parent = max(pref, key=len) if pref else last_section
         seen.append(k)
+        uri = f"<{base}{sid}/{k}>"
         triples = [f"{uri} a skos:Concept", f"    skos:inScheme {scheme}",
                    f"    skos:notation {lit(code)}", f"    skos:prefLabel {lit(title)}@{lang}"]
-        if parent:
-            triples.append(f"    skos:broader <{base}{sid}/{parent}>")
-        else:
-            triples.append(f"    skos:topConceptOf {scheme}")
+        triples.append(f"    skos:broader <{base}{sid}/{parent}>" if parent else f"    skos:topConceptOf {scheme}")
+        if note:
+            triples.append(f"    skos:editorialNote {lit(note)}@en")
+        note_blocks = []
+        for prop, text in xnotes:  # XKOS explanatory notes, modelled as INSEE and Eurostat do
+            nuri = f"<{base}{sid}/{k}/note/{prop}>"
+            triples.append(f"    xkos:{prop} {nuri}")
+            note_blocks.append(f"{nuri} a xkos:ExplanatoryNote ;\n    xkos:plainText {lit_text(text)}@{lang} .\n")
         out.append(" ;\n".join(triples) + " .\n")
+        out.extend(note_blocks)
         n += 1
     return "\n".join(out), n
 
 
-def build_correspondence(header, rows, src_i, tgt_i, src_base, tgt_base, cid, label, source_url,
-                         note_i: int | None = None) -> tuple[str, int]:
+def build_correspondence(rows, src_i, tgt_i, src_base, tgt_base, cid, label, source_url,
+                         note_i: int | None = None, key_style: str = "compact") -> tuple[str, int]:
     corr = f"<{DEFAULT_BASE}correspondence/{cid}>"
     out = [TTL_PREFIXES, f"{corr} a xkos:Correspondence ;\n    skos:prefLabel {lit(label)}@en ;\n"
            f"{provenance(source_url, 'Correspondence table')} .\n"]
@@ -161,7 +305,7 @@ def build_correspondence(header, rows, src_i, tgt_i, src_base, tgt_base, cid, la
     for r in rows:
         if len(r) <= max(src_i, tgt_i):
             continue
-        s, t = code_key(r[src_i]), code_key(r[tgt_i])
+        s, t = code_key(r[src_i], key_style), code_key(r[tgt_i], key_style)
         if s and t:
             note = r[note_i].strip() if note_i is not None and len(r) > note_i else ""
             pairs.setdefault((s, t), note)
@@ -171,6 +315,65 @@ def build_correspondence(header, rows, src_i, tgt_i, src_base, tgt_base, cid, la
         out.append(f"{a} a xkos:ConceptAssociation ;\n    xkos:sourceConcept <{src_base}{s}> ;\n"
                    f"    xkos:targetConcept <{tgt_base}{t}>{extra} .\n{corr} xkos:madeOf {a} .\n")
     return "\n".join(out), len(pairs)
+
+
+# --------------------------------------------------------------------------- api
+
+
+class ConversionError(ValueError):
+    pass
+
+
+def convert(path: Path, mode: str = "scheme", *, id: str, label: str, lang: str = "en",
+            base: str = DEFAULT_BASE, code_col=None, label_col=None, parent_col=None,
+            source_base: str | None = None, target_base: str | None = None,
+            source_col=None, target_col=None, note_col=None, sheet=None, no_header: bool = False,
+            filter_col=None, filter_value=None, fill_down=None, key_style: str = "compact",
+            source_url: str | None = None, prov_note: str | None = None,
+            notes=None, skip_codes=None) -> tuple[str, int, str]:
+    """Convert one file to Turtle. Returns (turtle, number of items or links, description).
+    Used by the classif-unsd command and by live "file" endpoints in the server."""
+    try:
+        header, rows = read_table(Path(path), sheet, no_header)
+        rows = prepare_rows(rows, header, filter_col, filter_value, fill_down)
+        if mode == "scheme":
+            ci = pick(header, code_col, [r"code", r"^id$"])
+            li = pick(header, label_col, [r"title", r"desc", r"label", r"name", r"^text$"], {ci})
+            pi = pick(header, parent_col, []) if parent_col else (
+                header.index("parent") if "parent" in header else None)
+            note_cols = parse_notes(notes, header)
+            skip = ({c.strip() for c in skip_codes.split(",")} if isinstance(skip_codes, str)
+                    else set(skip_codes or []))
+            if skip:  # aggregates such as "TOTAL" that are not classification items
+                rows = [r for r in rows if not (len(r) > ci and r[ci].strip() in skip)]
+            info = (f"header={header}\ncode={header[ci]!r} label={header[li]!r} "
+                    f"parent={header[pi] if pi is not None else None!r} "
+                    f"notes={[(header[c], p) for c, p in note_cols]} rows={len(rows)}")
+            if pi is not None:  # parents named in the file but absent from it: report, never invent
+                codes = {r[ci].strip() for r in rows if len(r) > ci}
+                missing = sorted({r[pi].strip() for r in rows if len(r) > pi and r[pi].strip()
+                                  and r[pi].strip() not in codes and r[pi].strip() not in skip})
+                if missing:
+                    n_orph = sum(1 for r in rows if len(r) > pi and r[pi].strip() in missing)
+                    info += (f"\nWARNING: {n_orph} items name a parent that is not in the file "
+                             f"({', '.join(missing[:10])}); they are kept at the top level, as published.")
+            ttl, n = build_scheme(rows, ci, li, base.rstrip("/") + "/", id, label, lang, source_url,
+                                  pi, key_style, prov_note, notes=note_cols)
+        elif mode == "correspondence":
+            if not (source_base and target_base):
+                raise ConversionError("source_base and target_base are required for a correspondence")
+            si = pick(header, source_col, [r"code"])
+            ti = pick(header, target_col, [r"code"], {si})
+            ni = pick(header, note_col, []) if note_col else None
+            info = (f"header={header}\nsource={header[si]!r} target={header[ti]!r} "
+                    f"note={header[ni] if ni is not None else None!r} rows={len(rows)}")
+            ttl, n = build_correspondence(rows, si, ti, source_base, target_base, id, label,
+                                          source_url, ni, key_style)
+        else:
+            raise ConversionError(f"unknown mode {mode!r}")
+    except SystemExit as e:  # pick() exits with a message in CLI use
+        raise ConversionError(str(e)) from None
+    return ttl, n, info
 
 
 # --------------------------------------------------------------------------- cli
@@ -187,7 +390,10 @@ def main(argv: list[str] | None = None) -> None:
     s.add_argument("--label", required=True)
     s.add_argument("--lang", default="en")
     s.add_argument("--base", default=DEFAULT_BASE)
-    s.add_argument("--code-col"); s.add_argument("--label-col")
+    s.add_argument("--code-col"); s.add_argument("--label-col"); s.add_argument("--parent-col")
+    s.add_argument("--skip-codes", help='comma-separated codes to leave out, e.g. "TOTAL"')
+    s.add_argument("--notes", help='explanatory notes as XKOS, e.g. "intro=core,includes=inclusion,'
+                                   'alsoIncludes=additional,excludes=exclusion"')
 
     c = sub.add_parser("correspondence", help="convert a correspondence table")
     c.add_argument("file", type=Path)
@@ -201,28 +407,21 @@ def main(argv: list[str] | None = None) -> None:
 
     for p in (s, c):
         p.add_argument("--sheet", help="Excel sheet name (default: first)")
-        p.add_argument("--source-url", help="URL of the UNSD file, recorded as dct:source")
+        p.add_argument("--no-header", action="store_true", help="the file has no header row")
+        p.add_argument("--filter-col"); p.add_argument("--filter-value")
+        p.add_argument("--fill-down", help="comma-separated columns to fill down")
+        p.add_argument("--key-style", choices=["compact", "dotted"], default="compact")
+        p.add_argument("--source-url", help="URL of the source file, recorded as dct:source")
         p.add_argument("-o", "--output", type=Path)
         p.add_argument("--dry-run", action="store_true")
 
     a = ap.parse_args(argv)
-    header, rows = read_table(a.file, a.sheet)
-
-    if a.mode == "scheme":
-        ci = pick(header, a.code_col, [r"code"])
-        li = pick(header, a.label_col, [r"title", r"desc", r"label", r"name"], {ci})
-        print(f"header={header}\ncode column={header[ci]!r}  label column={header[li]!r}  rows={len(rows)}",
-              file=sys.stderr)
-        ttl, n = build_scheme(header, rows, ci, li, a.base.rstrip("/") + "/", a.id, a.label, a.lang, a.source_url)
-    else:
-        si = pick(header, a.source_col, [r"code"])
-        ti = pick(header, a.target_col, [r"code"], {si})
-        ni = pick(header, a.note_col, []) if a.note_col else None
-        print(f"header={header}\nsource column={header[si]!r}  target column={header[ti]!r}  "
-              f"note column={header[ni] if ni is not None else None!r}  rows={len(rows)}", file=sys.stderr)
-        ttl, n = build_correspondence(header, rows, si, ti, a.source_base, a.target_base, a.id, a.label,
-                                      a.source_url, ni)
-
+    opts = {k: v for k, v in vars(a).items() if k not in ("mode", "file", "output", "dry_run")}
+    try:
+        ttl, n, info = convert(a.file, a.mode, **opts)
+    except ConversionError as e:
+        sys.exit(str(e))
+    print(info, file=sys.stderr)
     print(f"{n} items/links generated", file=sys.stderr)
     if a.dry_run:
         return

@@ -6,7 +6,7 @@
 
 <http://classif-mcp.local/unsd/cpc-v3/scheme> a skos:ConceptScheme ;
     skos:prefLabel "CPC Ver. 3.0"@en ;
-    skos:note "Classification converted from a UNSD file by classif-mcp. Not an official linked-data publication; check against the source file."@en ;
+    skos:note "Classification converted from a published file by classif-mcp. Not an official linked-data publication; check against the source file."@en ;
     dct:source <https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/CPC_Ver_3.0_Structure_30Jun2025.csv> .
 
 <http://classif-mcp.local/unsd/cpc-v3/0> a skos:Concept ;

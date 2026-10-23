@@ -6,7 +6,7 @@
 
 <http://classif-mcp.local/unsd/isic-rev5/scheme> a skos:ConceptScheme ;
     skos:prefLabel "ISIC Rev. 5"@en ;
-    skos:note "Classification converted from a UNSD file by classif-mcp. Not an official linked-data publication; check against the source file."@en ;
+    skos:note "Classification converted from a published file by classif-mcp. Not an official linked-data publication; check against the source file."@en ;
     dct:source <https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/ISIC_Rev_5_english_structure.csv> .
 
 <http://classif-mcp.local/unsd/isic-rev5/A> a skos:Concept ;

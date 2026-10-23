@@ -16,9 +16,14 @@ dependencies = [
   "openpyxl>=3.1",
 ]
 
+[project.optional-dependencies]
+# conversion tools (classif-unsd for .xls, classif-pdf); not needed to run the server
+tools = ["xlrd>=2.0", "pdfplumber>=0.11"]
+
 [project.scripts]
 classif-mcp = "classif_mcp.server:main"
 classif-unsd = "classif_mcp.unsd_to_skos:main"
+classif-pdf = "classif_mcp.pdf_extract:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/classif_mcp"]

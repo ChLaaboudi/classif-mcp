@@ -6,8 +6,10 @@ statistical classifications and keep provenance explicit:
 
   * published   - a link stated in the RDF of an endpoint (skos:*Match,
                   XKOS concept associations)
-  * converted   - a link read from a UNSD CSV/Excel file converted to SKOS/XKOS
-                  by classif-unsd (type = "local" endpoints)
+  * converted   - a link read from a publisher's CSV/Excel/JSON file converted to
+                  SKOS/XKOS, live (type = "file") or kept on disk (type = "local")
+  * extracted   - transcribed from a PDF with classif-pdf; the source PDF is
+                  watched for changes (check_source = true)
   * derived     - a link computed by this server from codes (match_by_code);
                   never an official correspondence
 """
@@ -18,12 +20,15 @@ import asyncio
 import logging
 import os
 import re
+import threading
 import tomllib
 from pathlib import Path
 from typing import Any
 
 import httpx
 from mcp.server.fastmcp import FastMCP
+
+from .live import RDF_LOCK, LiveEndpoint, SourceWatch
 
 PREFIXES = """PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX xkos: <http://rdf-vocabulary.ddialliance.org/xkos#>
@@ -61,28 +66,62 @@ def _load_config() -> dict[str, dict[str, Any]]:
 
 ENDPOINTS = _load_config()
 logging.getLogger("httpx").setLevel(logging.WARNING)
+
+# type = "local": Turtle files on disk.  type = "file": files fetched live from
+# their publisher (live.LiveEndpoint).  A local endpoint with check_source = true
+# also compares the PDFs it was transcribed from with what is published now.
 _LOCAL_GRAPHS: dict[str, Any] = {}
+_LOCAL_INIT = threading.Lock()
+_LIVE = {n: LiveEndpoint(n, c, CONFIG_PATH.parent) for n, c in ENDPOINTS.items() if c.get("type") == "file"}
+_WATCH = {n: SourceWatch(float(c.get("refresh_hours", 24)))
+          for n, c in ENDPOINTS.items() if c.get("type") == "local" and c.get("check_source")}
 
 
 def _local_graph(name: str):
     """Load (once) the Turtle files of a type="local" endpoint into memory."""
-    if name not in _LOCAL_GRAPHS:
-        import rdflib
+    with _LOCAL_INIT:
+        if name not in _LOCAL_GRAPHS:
+            import rdflib
 
-        g = rdflib.Graph()
-        for f in ENDPOINTS[name].get("files", []):
-            p = Path(f)
-            if not p.is_absolute():
-                p = CONFIG_PATH.parent / p
-            if p.exists():
-                g.parse(p)
-        _LOCAL_GRAPHS[name] = g
+            g = rdflib.Graph()
+            with RDF_LOCK:
+                for f in ENDPOINTS[name].get("files", []):
+                    p = Path(f)
+                    if not p.is_absolute():
+                        p = CONFIG_PATH.parent / p
+                    if p.exists():
+                        g.parse(p)
+            _LOCAL_GRAPHS[name] = g
     return _LOCAL_GRAPHS[name]
 
 
 def _local_query(name: str, query: str) -> list[dict[str, str]]:
-    res = _local_graph(name).query(query)
-    return [{str(k): str(v) for k, v in row.asdict().items()} for row in res]
+    g = _local_graph(name)
+    if name in _WATCH:
+        try:
+            _WATCH[name].check(g)
+        except Exception:  # a failed watch must never block answers
+            pass
+    # rdflib's SPARQL parser is not thread-safe: serialise in-memory queries.
+    with RDF_LOCK:
+        return [{str(k): str(v) for k, v in row.asdict().items()} for row in g.query(query)]
+
+
+def _provenance(name: str) -> str:
+    """Provenance label of an endpoint, with its live state where there is one."""
+    base = ENDPOINTS[name].get("provenance", "published")
+    if name in _LIVE:
+        # one short state per source: live, or the copy in use and why (details: list_endpoints)
+        parts = []
+        for s in _LIVE[name].status():
+            st = s["status"]
+            parts.append(f"{s['id']}: live" if st.startswith("live") else f"{s['id']}: {st}")
+        if all(p.endswith(": live") for p in parts):
+            return f"{base} [live from source]"
+        return f"{base} [{'; '.join(parts)}]"
+    if name in _WATCH and _WATCH[name].summary():
+        return f"{base} [{_WATCH[name].summary()}]"
+    return base
 TIMEOUT = float(os.environ.get("CLASSIF_MCP_TIMEOUT", "45"))
 MAX_ROWS = int(os.environ.get("CLASSIF_MCP_MAX_ROWS", "200"))
 
@@ -107,10 +146,13 @@ def _norm_code(code: str) -> str:
 
 
 def _endpoint_for_uri(uri: str) -> str | None:
+    """The endpoint whose longest uri_prefix matches (so .../unsd/sitc wins over .../unsd/)."""
+    best, best_len = None, -1
     for name, cfg in ENDPOINTS.items():
-        if any(uri.startswith(p) for p in cfg.get("uri_prefixes", [])):
-            return name
-    return None
+        for p in cfg.get("uri_prefixes", []):
+            if uri.startswith(p) and len(p) > best_len:
+                best, best_len = name, len(p)
+    return best
 
 
 def _check_endpoint(name: str) -> None:
@@ -123,6 +165,8 @@ async def _sparql(endpoint: str, query: str) -> list[dict[str, str]]:
     _check_endpoint(endpoint)
     if ENDPOINTS[endpoint].get("type") == "local":
         return await asyncio.to_thread(_local_query, endpoint, query)
+    if ENDPOINTS[endpoint].get("type") == "file":
+        return await asyncio.to_thread(_LIVE[endpoint].query, query)
     url = ENDPOINTS[endpoint]["url"]
     headers = {
         "Accept": "application/sparql-results+json",
@@ -160,20 +204,25 @@ def _targets(endpoint: str | None) -> list[str]:
 
 @mcp.tool()
 async def list_endpoints() -> list[dict[str, Any]]:
-    """List the configured classification endpoints, with their level
-    (world / eu / national) and the URI prefixes each one publishes."""
-    return [
-        {
-            "endpoint": name,
-            "label": cfg.get("label", ""),
-            "level": cfg.get("level", ""),
-            "country": cfg.get("country"),
-            "url": cfg.get("url") or "local files: " + ", ".join(cfg.get("files", [])),
-            "type": cfg.get("type", "sparql"),
-            "uri_prefixes": cfg.get("uri_prefixes", []),
-        }
-        for name, cfg in ENDPOINTS.items()
-    ]
+    """List the configured classification endpoints: level (world / eu / national),
+    type (sparql = published RDF, file = converted live from the publisher's file,
+    local = converted or extracted copy), provenance, and for live files and
+    watched PDFs their current state (fetched, unchanged, fallback, changed ...)."""
+    out = []
+    for name, cfg in ENDPOINTS.items():
+        t = cfg.get("type", "sparql")
+        where = (cfg.get("url") if t == "sparql" else
+                 [s.get("url") for s in cfg.get("sources", [])] if t == "file" else
+                 "local files: " + ", ".join(cfg.get("files", [])))
+        item = {"endpoint": name, "label": cfg.get("label", ""), "level": cfg.get("level", ""),
+                "country": cfg.get("country"), "type": t, "source": where,
+                "provenance": _provenance(name), "uri_prefixes": cfg.get("uri_prefixes", [])}
+        if name in _LIVE:
+            item["live_status"] = _LIVE[name].status()
+        if name in _WATCH and _WATCH[name].results:
+            item["source_watch"] = _WATCH[name].results
+        out.append(item)
+    return out
 
 
 @mcp.tool()
@@ -248,7 +297,8 @@ SELECT DISTINCT ?c ?code ?label ?scheme WHERE {{
         for r in rows:
             out["concepts"].append(
                 {"endpoint": name, "uri": r["c"], "code": r.get("code", ""),
-                 "label": r.get("label", ""), "scheme": r.get("scheme", "")}
+                 "label": r.get("label", ""), "scheme": r.get("scheme", ""),
+                 "provenance": _provenance(name)}
             )
     return out
 
@@ -265,14 +315,29 @@ async def get_concept(uri: str, endpoint: str | None = None, lang: str = "en") -
 SELECT ?p ?o WHERE {{ {_iri(uri)} ?p ?o .
   FILTER(!isLiteral(?o) || LANG(?o) = "" || LANGMATCHES(LANG(?o), "{_lit(lang)}")) }}
 LIMIT 500"""
-    rows = await _sparql(endpoint, q)
+    # XKOS explanatory notes are resources (xkos:ExplanatoryNote) holding xkos:plainText,
+    # as published by INSEE and Eurostat and generated by classif-unsd --notes
+    qn = f"""{PREFIXES}
+SELECT ?p ?text (LANG(?text) AS ?lang) ?nlang WHERE {{
+  {_iri(uri)} ?p ?n . ?n xkos:plainText ?text .
+  OPTIONAL {{ ?n dct:language ?nlang }}
+}} LIMIT 100"""
+    rows, nrows = await asyncio.gather(_sparql(endpoint, q), _sparql_safe(endpoint, qn))
     props: dict[str, list[str]] = {}
     for r in rows:
         key = re.split(r"[#/]", r["p"])[-1]
         props.setdefault(key, [])
         if r["o"] not in props[key]:
             props[key].append(r["o"])
-    return {"endpoint": endpoint, "uri": uri, "properties": props}
+    out: dict[str, Any] = {"endpoint": endpoint, "uri": uri, "properties": props}
+    notes: dict[str, list[dict[str, str]]] = {}
+    for r in nrows[0]:
+        nl = (r.get("lang") or str(r.get("nlang", "")).rsplit("/", 1)[-1]).lower()
+        notes.setdefault(re.split(r"[#/]", r["p"])[-1], []).append({"lang": nl, "text": r["text"]})
+    if notes:  # requested language first; other languages only when it has none
+        out["explanatory_notes"] = {
+            k: ([n for n in v if n["lang"].startswith(lang.lower())] or v) for k, v in notes.items()}
+    return out
 
 
 @mcp.tool()
@@ -359,7 +424,7 @@ SELECT DISTINCT ?rel ?dir ?t ?ts ?code ?label ?note WHERE {{
                 continue
             seen.add(key)
             out["links"].append({
-                "provenance": ENDPOINTS[name].get("provenance", "published"),
+                "provenance": _provenance(name),
                 "stated_at": name,
                 "relation": r["rel"].split("#")[-1],
                 "direction": r["dir"],
@@ -369,7 +434,47 @@ SELECT DISTINCT ?rel ?dir ?t ?ts ?code ?label ?note WHERE {{
                 "target_label": r.get("label", ""),
                 **({"note": r["note"]} if r.get("note") else {}),
             })
+    await _fill_target_labels(out["links"], lang)
     return out
+
+
+async def _fill_target_labels(links: list[dict[str, Any]], lang: str) -> None:
+    """A link stated by one publisher often points into another's classification
+    (COICOP 2018 -> Caliper's COICOP 1999, ISIC Rev. 4 -> NACE). Fetch the missing
+    code, label and scheme of such targets from the endpoint that publishes them."""
+    by_ep: dict[str, set[str]] = {}
+    for l in links:
+        if not l["target_label"]:
+            ep = _endpoint_for_uri(l["target"])
+            if ep:
+                by_ep.setdefault(ep, set()).add(l["target"])
+    if not by_ep:
+        return
+
+    async def lookup(ep: str, uris: set[str]):
+        values = " ".join(_iri(u) for u in list(uris)[:100])
+        q = f"""{PREFIXES}
+SELECT ?t ?code ?label ?ts WHERE {{
+  VALUES ?t {{ {values} }}
+  OPTIONAL {{ ?t skos:prefLabel ?label .
+             FILTER(LANGMATCHES(LANG(?label), "{_lit(lang)}") || LANG(?label) = "") }}
+  OPTIONAL {{ ?t skos:inScheme ?ts }}
+  {CODE_PATTERN.format(v="?t", out="?code")}
+}}"""
+        rows, _ = await _sparql_safe(ep, q)
+        return rows
+
+    found: dict[str, dict[str, str]] = {}
+    for rows in await asyncio.gather(*(lookup(ep, uris) for ep, uris in by_ep.items())):
+        for r in rows:
+            if r.get("label") or r.get("code"):
+                found.setdefault(r["t"], r)
+    for l in links:
+        f = found.get(l["target"])
+        if f and not l["target_label"]:
+            l["target_label"] = f.get("label", "")
+            l["target_code"] = l["target_code"] or f.get("code", "")
+            l["target_scheme"] = l["target_scheme"] or f.get("ts", "")
 
 
 @mcp.tool()
