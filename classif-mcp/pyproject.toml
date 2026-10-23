@@ -1,0 +1,24 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "classif-mcp"
+version = "0.1.0"
+description = "MCP server linking statistical classifications across UN, EU and national SPARQL endpoints and converted UNSD files"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "EUPL-1.2" }
+dependencies = [
+  "mcp>=1.10,<2",
+  "httpx>=0.27",
+  "rdflib>=7.0",
+  "openpyxl>=3.1",
+]
+
+[project.scripts]
+classif-mcp = "classif_mcp.server:main"
+classif-unsd = "classif_mcp.unsd_to_skos:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/classif_mcp"]
