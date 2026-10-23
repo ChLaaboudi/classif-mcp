@@ -438,8 +438,26 @@ async def health(request):  # liveness probe for hosting platforms
 def main() -> None:
     transport = os.environ.get("CLASSIF_MCP_TRANSPORT", "stdio")
     if transport == "http":
+        from mcp.server.transport_security import TransportSecuritySettings
+
         mcp.settings.host = os.environ.get("HOST", "127.0.0.1")
         mcp.settings.port = int(os.environ.get("PORT", "8000"))
+        # The SDK only accepts Host: localhost by default (DNS-rebinding protection),
+        # which rejects a public deployment with HTTP 421. Accept the public host
+        # names listed in CLASSIF_MCP_ALLOWED_HOSTS (comma-separated), or, for a
+        # public bind without that list, turn the check off: the server is
+        # read-only and serves public data.
+        allowed = [h.strip() for h in os.environ.get("CLASSIF_MCP_ALLOWED_HOSTS", "").split(",") if h.strip()]
+        if allowed:
+            mcp.settings.transport_security = TransportSecuritySettings(
+                enable_dns_rebinding_protection=True,
+                allowed_hosts=allowed + [f"{h}:*" for h in allowed] + ["localhost:*", "127.0.0.1:*"],
+                allowed_origins=[f"https://{h}" for h in allowed] + ["https://claude.ai"],
+            )
+        elif mcp.settings.host not in ("127.0.0.1", "localhost", "::1"):
+            mcp.settings.transport_security = TransportSecuritySettings(
+                enable_dns_rebinding_protection=False
+            )
         mcp.run(transport="streamable-http")
     else:
         mcp.run()
