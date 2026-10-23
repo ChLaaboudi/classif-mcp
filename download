@@ -1,4 +1,0 @@
-.venv
-snapshots
-**/__pycache__
-*.egg-info
