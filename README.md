@@ -10,7 +10,7 @@ It queries each node at its source and reports, for every link, where that link 
 | World | ISIC Rev. 5, CPC Ver. 3.0, SITC Rev. 4, and the ISIC Rev. 4 → Rev. 5 table | UNSD files, converted live | 2 | `unsd` |
 | World / EU | HS 2022 and HS 2017 (published inside the CN 2026 and CN 2017 graphs) | Cellar, SPARQL | 1 | `cellar` |
 | EU | NACE Rev. 2.1 and Rev. 2, CPA 2.2 and 2.1, PRODCOM 2026, CN 2026 | Cellar (EU Vocabularies), SPARQL | 1 | `cellar` |
-| National (FR) | NAF 2025, NAF rév. 2, CPF rév. 2.1 | INSEE, SPARQL | 1 | `insee` |
+| National (FR) | NAF 2025, NAF rév. 2, CPF rév. 2.1, and the national product lists for production surveys: EAP 2025 (annual survey) and EMB 2026 (monthly branch surveys) | INSEE, SPARQL | 1 | `insee` |
 | National (CH) | NOGA 2025 | FSO code list on I14Y, converted live | 2 | `i14y` |
 
 Previous versions are kept where they carry the published links between generations:
@@ -254,7 +254,7 @@ Everything below is done in a web browser. Nothing is installed locally.
 | `get_concept` | Return the labels, code, parent and notes of one item. |
 | `get_hierarchy` | Return all ancestors (`up`) or the direct children (`down`). |
 | `get_correspondences` | Return all links of an item, searched on **every** endpoint and in both directions, each with its provenance. |
-| `match_by_code` | Return a derived, code-based candidate link. It is marked as such. |
+| `match_by_code` | Return a derived, code-based candidate link, in either direction. Upwards it covers NAF 62.10Y → NACE 62.10 and EAP 3092120000 → PRODCOM 30.92.12.00. Downwards it returns national extensions of a code: PRODCOM 30.92.12.00 → EAP 3092120000, NACE 62.10 → NAF 62.10Y. It is marked as derived. |
 | `run_sparql` | Run a read-only SELECT as an escape hatch. |
 
 ## Demo prompt
@@ -292,6 +292,12 @@ Endpoints are declared in `endpoints.toml`:
 - Publishes a NAF rév. 2 → CPF rév. 2.1 correspondence.
 - CPF rév. 2.1 (5,522 items) is the most recent CPF on rdf.insee.fr.
 - There is **no** link from NAF or CPF to NACE or CPA, so NAF→NACE and CPF→CPA are *derived* links (`match_by_code`).
+- **EAP 2025** (annual production survey) and **EMB 2026** (monthly branch surveys) are INSEE's national product lists for production statistics, the French counterparts of PRODCOM.
+  - EAP codes extend PRODCOM codes by two digits (3092120000 ↔ 30.92.12.00). There is no published link to PRODCOM, so the link is derived.
+  - EMB items carry published `skos:relatedMatch` links to NAF 2025. For example, EMB 3091Z1R0012 "vélos … à assistance électrique", still coded under NAF rév. 2 30.91Z (motorcycles), links to NAF 2025 30.92Y (bicycles).
+- **Anomalies to report to INSEE:**
+  - 5,466 EAP and 794 EMB items have non-http identifiers (`eap:produit/3092120000`, `emb:produit/3091Z1R0012`), apparently unexpanded prefixes. They can't be dereferenced or reused by other publishers. The server accepts and routes them as they are.
+  - EAP items point (`skos:definition`) to note identifiers that have no content.
 
 **I14Y (FSO)**
 - NOGA 2025 is code list `nogaCode` version 2.0.1, valid from 6 March 2026, status PreferredStandard.
@@ -334,6 +340,7 @@ NACE 2.1 62.10 → NACE 2 62.01 → ISIC 4 6201 → ISIC 5 6211 / 6219
 - `classif-unsd` on the real UNSD files: ISIC Rev. 5, CPC Ver. 3.0 and ISIC 4→5 (CSV/XLSX), SITC Rev. 1 (.xls, no header) and EBOPS 2010–CPC 2.0 (.xls, grouped rows);
 - `classif-pdf` on the real EBOPS 2010 PDF, including `compare` with a second, simulated reading;
 - the full chain ISIC → CPC → HS 2017 → HS 2022 → SITC, over HTTP with concurrent calls;
+- the e-bike chain CN 2026 → HS 2022 → SITC Rev. 4 and CN 2026 → PRODCOM 2026 → EAP 2025 / EMB 2026 → NAF 2025;
 - live `file` endpoints against unstats.un.org and api.i14y.admin.ch (NOGA 2025). This covered first fetch, conditional refresh (304), a renamed column, a missing file, a size jump, and fallback to the last good copy. The live result is identical to the converted files: 29,869 triples;
 - the PDF change watch, against the real EBOPS PDF and against a tampered fingerprint.
 

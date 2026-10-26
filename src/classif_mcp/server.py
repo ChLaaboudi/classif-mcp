@@ -132,8 +132,10 @@ def _lit(text: str) -> str:
 
 
 def _iri(uri: str) -> str:
-    if not re.match(r"^https?://[^\s<>\"{}|\\^`]+$", uri):
-        raise ValueError(f"Not a valid http(s) URI: {uri!r}")
+    # http(s) URIs, plus other absolute IRIs that some publishers use as identifiers
+    # (INSEE's survey lists: "eap:produit/3092120000", "emb:produit/3091Z1R0012")
+    if not re.match(r"^(https?://|[a-z][a-z0-9+.-]*:)[^\s<>\"{}|\\^`]+$", uri):
+        raise ValueError(f"Not a valid IRI: {uri!r}")
     return f"<{uri}>"
 
 
@@ -385,21 +387,31 @@ async def get_hierarchy(
     if not endpoint:
         raise ValueError(f"No configured endpoint publishes {uri}; pass endpoint=...")
     if direction == "up":
-        pattern = f"{_iri(uri)} skos:broader+ ?x ."
+        # fixed-length steps (1..8 levels), not skos:broader+ : on large stores such as
+        # Cellar the open-ended path times out, fixed paths are answered at once
+        steps = [f"{{ {_iri(uri)} {'/'.join(['skos:broader'] * n)} ?x . BIND({n} AS ?d) }}"
+                 for n in range(1, 9)]
+        pattern = " UNION ".join(steps)
     elif direction == "down":
         pattern = f"{{ ?x skos:broader {_iri(uri)} }} UNION {{ {_iri(uri)} skos:narrower ?x }}"
     else:
         raise ValueError('direction must be "up" or "down"')
     q = f"""{PREFIXES}
-SELECT DISTINCT ?x ?code ?label WHERE {{
+SELECT DISTINCT ?x ?code ?label ?d WHERE {{
   {pattern}
   OPTIONAL {{ ?x skos:prefLabel ?label .
              FILTER(LANGMATCHES(LANG(?label), "{_lit(lang)}") || LANG(?label) = "") }}
   {CODE_PATTERN.format(v="?x", out="?code")}
 }} ORDER BY ?code LIMIT {MAX_ROWS}"""
     rows = await _sparql(endpoint, q)
-    if direction == "up":  # top-down: section, division, group, ...
-        rows.sort(key=lambda r: (len(_norm_code(r.get("code", ""))), r.get("code", "")))
+    if direction == "up":  # top-down: section, division, group, ... (furthest ancestor first)
+        rows.sort(key=lambda r: (-int(r.get("d") or 0), r.get("code", "")))
+        seen, uniq = set(), []
+        for r in rows:  # an ancestor reached at two depths is listed once
+            if r["x"] not in seen:
+                seen.add(r["x"])
+                uniq.append(r)
+        rows = uniq
     return {
         "endpoint": endpoint, "uri": uri, "direction": direction,
         "items": [{"uri": r["x"], "code": r.get("code", ""), "label": r.get("label", "")} for r in rows],
@@ -530,13 +542,17 @@ SELECT ?t ?code ?label ?ts WHERE {{
 async def match_by_code(
     code: str, target_scheme: str, endpoint: str | None = None, lang: str = "en"
 ) -> dict[str, Any]:
-    """DERIVE a candidate link by code, e.g. NAF "62.10Z" -> NACE "62.10".
+    """DERIVE a candidate link by code, in either direction:
 
-    Tries the full code, then shorter prefixes, against the codes of
-    `target_scheme`. Use it only where the national classification is built
-    on the European one by extending its codes, and only when no published
-    link exists. Results are marked provenance="derived" and must not be
-    presented as official correspondences.
+    up    national -> EU: the full code, then shorter prefixes, against the codes of
+          `target_scheme` (NAF "62.10Y" -> NACE "62.10"; EAP "3092120000" -> PRODCOM "30.92.12.00");
+    down  EU -> national: when nothing matches upwards, the codes of `target_scheme`
+          that extend the given code (NACE "62.10" -> NAF "62.10Y";
+          PRODCOM "30.92.12.00" -> EAP "3092120000"; NACE "6210" -> NOGA "621000").
+
+    Use it only where the national classification is built on the European one by
+    extending its codes, and only when no published link exists. Results are marked
+    provenance="derived" and must not be presented as official correspondences.
     """
     _check_scope(target_scheme)
     endpoint = endpoint or _endpoint_for_uri(target_scheme)
@@ -557,15 +573,41 @@ SELECT DISTINCT ?c ?code ?label ?k WHERE {{
     rows = await _sparql(endpoint, q)
     rows.sort(key=lambda r: -len(r["k"]))
     best = rows[0] if rows else None
-    return {
+    out: dict[str, Any] = {
         "provenance": "derived (code prefix match, not a published correspondence)",
         "source_code": code,
         "target_scheme": target_scheme,
         "match": None if not best else {
             "uri": best["c"], "code": best.get("code", ""), "label": best.get("label", ""),
-            "matched_on": best["k"],
+            "matched_on": best["k"], "direction": "up",
         },
     }
+    exact = bool(best) and len(best["k"]) == len(norm)
+    # down: target codes that extend the given code (national subdivisions); listed
+    # even after an exact match (NACE 62.10 -> NAF 62.10, with subclass 62.10Y)
+    qd = f"""{PREFIXES}
+SELECT DISTINCT ?c ?code ?label WHERE {{
+  ?c skos:inScheme {_iri(target_scheme)} .
+  {CODE_PATTERN.format(v="?c", out="?code")}
+  FILTER(STRSTARTS(UCASE(REPLACE(STR(?code), "[^0-9A-Za-z]", "")), "{_lit(norm)}"))
+  OPTIONAL {{ ?c skos:prefLabel ?label .
+             FILTER(LANGMATCHES(LANG(?label), "{_lit(lang)}") || LANG(?label) = "") }}
+}} LIMIT 30"""
+    down, _ = await _sparql_safe(endpoint, qd)
+    down = [r for r in down if len(_norm_code(r.get("code", ""))) > len(norm)]
+    if down:
+        down.sort(key=lambda r: (len(_norm_code(r.get("code", ""))), r.get("code", "")))
+        out["extensions"] = [{"uri": r["c"], "code": r.get("code", ""), "label": r.get("label", ""),
+                              "direction": "down"} for r in down]
+        if not exact:
+            # a national item extending the full code is closer than a shorter code above it
+            # (PRODCOM 30.92.12.00 -> EAP 3092120000, not the aggregate EAP 3092)
+            if out["match"]:
+                out["broader_match"] = out["match"]
+            r = down[0]
+            out["match"] = {"uri": r["c"], "code": r.get("code", ""), "label": r.get("label", ""),
+                            "matched_on": norm, "direction": "down"}
+    return out
 
 
 @mcp.tool()
