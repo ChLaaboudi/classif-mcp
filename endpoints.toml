@@ -1,52 +1,50 @@
-# Classification endpoints served by classif-mcp, by tier:
+# classif-mcp endpoints: the integrated system of economic classifications
+# (NACE Rev. 2.1 methodology, section 1.1, Figure 1):
+#   world     ISIC, CPC, HS, SITC
+#   EU        NACE, CPA, PRODCOM, CN
+#   national  national versions (here: NAF and CPF for France, NOGA 2025 for Switzerland)
+#
+# Tiers:
 #   tier 1  type = "sparql" (default)  published RDF, queried live
 #   tier 2  type = "file"              publisher's CSV/Excel/JSON, fetched and converted live
-#           type = "local"             a converted copy kept on disk
-#   tier 3  type = "local"             transcribed from a PDF (classif-pdf), with
-#                                      check_source = true to watch the PDF for changes
-# "uri_prefixes" lets the server route a concept URI to the endpoint that publishes it.
-# SPARQL URLs are given WITHOUT a trailing slash: on Caliper and INSEE the
-# trailing-slash form serves the web query UI, not the API. Verified 2026-10-23.
+#   tier 3  type = "local"             transcribed from a PDF with classif-pdf (none configured)
+#
+# "schemes" restricts a SPARQL endpoint to the listed classifications: searches,
+# scheme lists and links outside them are not returned. Previous versions are kept
+# where they carry the published links between generations (NACE Rev. 2, CPA 2.1,
+# NAF rev. 2): NACE Rev. 2.1 -> NACE Rev. 2 -> ISIC Rev. 4 -> ISIC Rev. 5.
+# "uri_prefixes" route a concept URI to the endpoint that publishes it.
+# SPARQL URLs are given WITHOUT a trailing slash (the slash form is the web UI).
+# Verified 2026-10-26.
 
-# ---------------------------------------------------------------- tier 1
+# ---------------------------------------------------------------- world, tier 1
 
 [endpoints.caliper]
-label = "Caliper (FAO) - ISIC Rev. 4, CPC v2.0/v2.1, COICOP 1999, FAO classifications"
+label = "Caliper (FAO) - ISIC Rev. 4, CPC Ver. 2.1 and 2.0"
 level = "world"
 url = "https://caliper.integratedmodelling.org/caliper/sparql"
-uri_prefixes = [
-  "https://unstats.un.org/classifications/",
-  "http://unstats.un.org/classifications/",
-  "https://stats.fao.org/classifications/",
+uri_prefixes = ["https://unstats.un.org/classifications/", "http://unstats.un.org/classifications/"]
+schemes = [
+  "https://unstats.un.org/classifications/ISIC/rev4/scheme",
+  "https://unstats.un.org/classifications/CPC/v2.1/core",
+  "https://unstats.un.org/classifications/CPC/v2.0/scheme",
 ]
 
-[endpoints.cellar]
-label = "EU Vocabularies / Cellar - Eurostat classifications (NACE, CPA, PRODCOM, CN, HS)"
-level = "eu"
-url = "https://publications.europa.eu/webapi/rdf/sparql"
-uri_prefixes = ["http://data.europa.eu/"]
-
-[endpoints.insee]
-label = "INSEE RDF - French national classifications (NAF 2025, NAF rev. 2, CPF, ...)"
-level = "national"
-country = "FR"
-url = "https://rdf.insee.fr/sparql"
-uri_prefixes = ["http://id.insee.fr/"]
-
-# ---------------------------------------------------------------- tier 2, live
+# ---------------------------------------------------------------- world, tier 2 (live)
 
 # UNSD files fetched from unstats.un.org and converted in memory. The server asks
 # UNSD whether a file changed (ETag) every refresh_hours; a new version is used
 # only if it passes the checks (required_columns, min_items, max_change).
 # Otherwise the last good copy is kept, then the cache, then the fallback file.
+# HS is not here: HS 2022 is published as RDF in Cellar (tier 1).
 [endpoints.unsd]
 type = "file"
-label = "UNSD files, converted live (ISIC Rev. 5, CPC Ver. 3.0, ISIC Rev. 4 - Rev. 5)"
+label = "UNSD files, converted live (ISIC Rev. 5, CPC Ver. 3.0, SITC Rev. 4, ISIC Rev. 4 - Rev. 5)"
 level = "world"
 provenance = "converted live from the UNSD file (not official linked data; see dct:source)"
 refresh_hours = 24
 uri_prefixes = ["http://classif-mcp.local/unsd/isic", "http://classif-mcp.local/unsd/cpc",
-                "http://classif-mcp.local/unsd/correspondence/isic"]
+                "http://classif-mcp.local/unsd/sitc", "http://classif-mcp.local/unsd/correspondence/isic"]
 
 [[endpoints.unsd.sources]]
 url = "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/ISIC_Rev_5_english_structure.csv"
@@ -64,6 +62,21 @@ required_columns = ["CPC Ver. 3.0  Code", "CPC Ver. 3.0 Title"]
 min_items = 4500
 fallback = "data/cpc-v3.ttl"
 
+# Known source anomaly: the SITC Rev. 4 sheet names divisions 09, 28 and 91 as
+# parents but does not contain them; those 12 items stay at the top level, as published.
+[[endpoints.unsd.sources]]
+url = "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/SITCCodeandDescription.xlsx"
+sheet = "SITC4"
+id = "sitc-rev4"
+label = "SITC Rev. 4"
+code_col = "Code"
+label_col = "Description"
+parent_col = "Parent Code"
+skip_codes = "TOTAL"
+required_columns = ["Code", "Description", "Parent Code"]
+min_items = 3900
+fallback = "data/sitc-rev4.ttl"
+
 [[endpoints.unsd.sources]]
 url = "https://unstats.un.org/unsd/classifications/Econ/tables/ISIC/ISIC_Rev4_to_ISIC_Rev5_Correspondence_Table-17Jan2025.xlsx"
 mode = "correspondence"
@@ -78,192 +91,72 @@ required_columns = ["ISIC Rev. 4 Code", "ISIC Rev. 5 Code"]
 min_items = 600
 fallback = "data/isic4-isic5.ttl"
 
-# International trade classifications (UNSD workbooks: one sheet per version, with
-# an explicit "Parent Code" column). HS 2022 is NOT here: it is published as RDF in
-# Cellar (tier 1). "TOTAL" is an aggregate row, not a classification item.
-# Known source anomaly: the SITC Rev. 4 sheet names divisions 09, 28 and 91 as
-# parents but does not contain them; those 12 items stay at the top level, as published.
-[endpoints.unsd_trade]
+# ---------------------------------------------------------------- EU, tier 1
+
+[endpoints.cellar]
+label = "Cellar (EU Vocabularies) - NACE, CPA, PRODCOM, CN and HS"
+level = "eu"
+url = "https://publications.europa.eu/webapi/rdf/sparql"
+uri_prefixes = ["http://data.europa.eu/"]
+schemes = [
+  "http://data.europa.eu/ux2/nace2.1/nace2.1",
+  "http://data.europa.eu/ux2/nace2/nace2",
+  "http://data.europa.eu/ehl/cpa22/cpa22",
+  "http://data.europa.eu/ehl/cpa21/cpa21",
+  "http://data.europa.eu/qw1/prodcom2026/prodcom2026",
+  "http://data.europa.eu/xsp/cn2026/cn2026",
+  "http://data.europa.eu/xsp/cn2026/hs2022",
+]
+
+# ---------------------------------------------------------------- national, tier 1
+
+[endpoints.insee]
+label = "INSEE - NAF 2025, NAF rev. 2 and CPF rev. 2.1 (France)"
+level = "national"
+country = "FR"
+url = "https://rdf.insee.fr/sparql"
+uri_prefixes = ["http://id.insee.fr/"]
+schemes = [
+  "http://id.insee.fr/codes/naf2025/naf",
+  "http://id.insee.fr/codes/nafr2/naf",
+  "http://id.insee.fr/codes/cpfr21/cpf",
+]
+
+# ---------------------------------------------------------------- national, tier 2 (live)
+
+# NOGA 2025 (Switzerland), from the FSO's code list on I14Y, the Swiss interoperability
+# platform: CSV export with an explicit ParentCode column, labels in de/fr/it/en and
+# includes / includes-also / excludes notes, written here as XKOS notes per language.
+# NOGA 2025 is identical to NACE Rev. 2.1 down to the class (4 digits) and adds Swiss
+# 6-digit types; I14Y publishes no link to NACE, so NOGA -> NACE is derived (match_by_code).
+# The URL names one version of the code list (nogaCode 2.0.1, valid from 2026-03-06);
+# when the FSO publishes a new version on I14Y, replace the concept id below.
+[endpoints.i14y]
 type = "file"
-label = "UNSD trade classifications, converted live (SITC Rev. 4, BEC Rev. 5, HS 2017)"
-level = "world"
-provenance = "converted live from the UNSD file (not official linked data; see dct:source)"
+label = "I14Y (FSO) - NOGA 2025, converted live (Switzerland)"
+level = "national"
+country = "CH"
+provenance = "converted live from the FSO code list on I14Y (not linked data; see dct:source)"
 refresh_hours = 24
-uri_prefixes = ["http://classif-mcp.local/unsd/sitc", "http://classif-mcp.local/unsd/bec", "http://classif-mcp.local/unsd/hs"]
+uri_prefixes = ["http://classif-mcp.local/i14y/"]
 
-[[endpoints.unsd_trade.sources]]
-url = "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/SITCCodeandDescription.xlsx"
-sheet = "SITC4"
-id = "sitc-rev4"
-label = "SITC Rev. 4"
+[[endpoints.i14y.sources]]
+url = "https://api.i14y.admin.ch/api/public/v1/concepts/001bfaa8-fa57-4d66-acfd-c795d67fcf80/codelist-entries/exports/csv"
+format = ".csv"
+id = "noga2025"
+label = "NOGA 2025"
+base = "http://classif-mcp.local/i14y/"
 code_col = "Code"
-label_col = "Description"
-parent_col = "Parent Code"
-skip_codes = "TOTAL"
-required_columns = ["Code", "Description", "Parent Code"]
-min_items = 3900
-fallback = "data/sitc-rev4.ttl"
-
-[[endpoints.unsd_trade.sources]]
-url = "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/BECCodeandDescription.xlsx"
-sheet = "BEC5"
-id = "bec-rev5"
-label = "BEC Rev. 5"
-code_col = "Code"
-label_col = "Description"
-parent_col = "Parent Code"
-skip_codes = "TOTAL"
-required_columns = ["Code", "Description", "Parent Code"]
-min_items = 170
-fallback = "data/bec-rev5.ttl"
-
-[[endpoints.unsd_trade.sources]]
-url = "https://unstats.un.org/unsd/classifications/Econ/download/In%20Text/HSCodeandDescription.xlsx"
-sheet = "HS17"
-id = "hs2017"
-label = "HS 2017"
-code_col = "Code"
-label_col = "Description"
-parent_col = "Parent Code"
-skip_codes = "TOTAL"
-required_columns = ["Code", "Description", "Parent Code"]
-min_items = 6500
-fallback = "data/hs2017.ttl"
-
-# Older trade versions: off by default to save memory (about 50 MB). Set enabled = true to use.
-[endpoints.unsd_trade_older]
-enabled = false
-type = "file"
-label = "UNSD trade classifications, older versions (SITC Rev. 3, 2, 1; BEC Rev. 4)"
-level = "world"
-provenance = "converted live from the UNSD file (not official linked data; see dct:source)"
-refresh_hours = 168
-uri_prefixes = ["http://classif-mcp.local/unsd/sitc-rev3", "http://classif-mcp.local/unsd/sitc-rev2",
-                "http://classif-mcp.local/unsd/sitc-rev1", "http://classif-mcp.local/unsd/bec-rev4"]
-
-[[endpoints.unsd_trade_older.sources]]
-url = "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/SITCCodeandDescription.xlsx"
-sheet = "SITC3"
-id = "sitc-rev3"
-label = "SITC Rev. 3"
-code_col = "Code"
-label_col = "Description"
-parent_col = "Parent Code"
-skip_codes = "TOTAL"
-min_items = 4100
-fallback = "data/sitc-rev3.ttl"
-
-[[endpoints.unsd_trade_older.sources]]
-url = "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/SITCCodeandDescription.xlsx"
-sheet = "SITC2"
-id = "sitc-rev2"
-label = "SITC Rev. 2"
-code_col = "Code"
-label_col = "Description"
-parent_col = "Parent Code"
-skip_codes = "TOTAL"
-min_items = 2500
-fallback = "data/sitc-rev2.ttl"
-
-[[endpoints.unsd_trade_older.sources]]
-url = "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/sitc%20Rev1.xls"
-id = "sitc-rev1"
-label = "SITC Rev. 1"
-no_header = true
-code_col = "0"
-label_col = "2"
-skip_codes = "TOTAL"
-min_items = 1900
-fallback = "data/sitc-rev1.ttl"
-
-[[endpoints.unsd_trade_older.sources]]
-url = "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/BECCodeandDescription.xlsx"
-sheet = "BEC4"
-id = "bec-rev4"
-label = "BEC Rev. 4"
-code_col = "Code"
-label_col = "Description"
-parent_col = "Parent Code"
-skip_codes = "TOTAL"
-min_items = 25
-fallback = "data/bec-rev4.ttl"
-
-# Classifications of expenditure according to purpose. COICOP 1999 is NOT here: it is
-# published as RDF in Caliper (tier 1); the COICOP 2018 -> 1999 table points to
-# Caliper's URIs, so the link connects. COICOP 2018 carries its explanatory notes as XKOS.
-[endpoints.unsd_purpose]
-type = "file"
-label = "UNSD purpose classifications, converted live (COICOP 2018 with notes, COFOG, COPNI, COPP)"
-level = "world"
-provenance = "converted live from the UNSD file (not official linked data; see dct:source)"
-refresh_hours = 168
-uri_prefixes = ["http://classif-mcp.local/unsd/coicop2018", "http://classif-mcp.local/unsd/cofog",
-                "http://classif-mcp.local/unsd/copni", "http://classif-mcp.local/unsd/copp"]
-
-[[endpoints.unsd_purpose.sources]]
-url = "https://unstats.un.org/unsd/classifications/Econ/Download/COICOP_2018_English_structure.xlsx"
-id = "coicop2018"
-label = "COICOP 2018"
-code_col = "code"
-label_col = "title"
-key_style = "dotted"
-notes = "intro=core,includes=inclusion,alsoIncludes=additional,excludes=exclusion"
-required_columns = ["code", "title", "intro", "includes", "alsoIncludes", "excludes"]
-min_items = 850
-fallback = "data/coicop2018.ttl"
-
-[[endpoints.unsd_purpose.sources]]
-url = "https://unstats.un.org/unsd/classifications/Econ/Download/COICOP2018_COICOP1999_correspondence_table_final.xlsx"
-mode = "correspondence"
-sheet = "Correspondence 2018-1999"
-id = "coicop2018-coicop1999"
-label = "COICOP 2018 - COICOP 1999"
-source_col = "COICOP 2018 Code"
-target_col = "COICOP 1999 Code"
-note_col = "Note/common content"
-key_style = "dotted"
-source_base = "http://classif-mcp.local/unsd/coicop2018/"
-target_base = "http://unstats.un.org/classifications/COICOP/1999/"
-required_columns = ["COICOP 2018 Code", "COICOP 1999 Code"]
-min_items = 400
-fallback = "data/coicop2018-coicop1999.ttl"
-
-[[endpoints.unsd_purpose.sources]]
-url = "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_english_structure.txt"
-id = "cofog1999"
-label = "COFOG 1999"
-key_style = "dotted"
-min_items = 180
-fallback = "data/cofog1999.ttl"
-
-[[endpoints.unsd_purpose.sources]]
-url = "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COPNI_English_structure.txt"
-id = "copni1999"
-label = "COPNI 1999"
-key_style = "dotted"
-min_items = 60
-fallback = "data/copni1999.ttl"
-
-[[endpoints.unsd_purpose.sources]]
-url = "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COPP_english_structure.txt"
-id = "copp1999"
-label = "COPP 1999"
-key_style = "dotted"
-min_items = 45
-fallback = "data/copp1999.ttl"
-
-# ---------------------------------------------------------------- tier 3
-
-# Classifications published only as PDF, transcribed with classif-pdf (see README).
-# Each file's skos:note says how its transcription was checked, and by whom.
-# check_source: the server compares each source PDF with the version that was
-# checked, and reports any change with every answer. Missing files are skipped.
-[endpoints.extracted]
-type = "local"
-label = "Classifications transcribed from PDF (LLM-assisted; transcription checked against the PDF)"
-level = "world"
-provenance = "extracted from the custodian's PDF; not endorsed by the custodian (see skos:note)"
-files = ["data/ebops2010.ttl"]
-check_source = true
-refresh_hours = 24
-uri_prefixes = ["http://classif-mcp.local/pdf/"]
+label_col = "Name_en"
+parent_col = "ParentCode"
+labels = "Name_en=en,Name_fr=fr,Name_de=de,Name_it=it"
+notes = """Description_en=core@en,Description_fr=core@fr,Description_de=core@de,Description_it=core@it,\
+Annotation_INCLUDES_Text_en=inclusion@en,Annotation_INCLUDES_Text_fr=inclusion@fr,\
+Annotation_INCLUDES_Text_de=inclusion@de,Annotation_INCLUDES_Text_it=inclusion@it,\
+Annotation_INCLUDES_ALSO_Text_en=additional@en,Annotation_INCLUDES_ALSO_Text_fr=additional@fr,\
+Annotation_INCLUDES_ALSO_Text_de=additional@de,Annotation_INCLUDES_ALSO_Text_it=additional@it,\
+Annotation_EXCLUDES_Text_en=exclusion@en,Annotation_EXCLUDES_Text_fr=exclusion@fr,\
+Annotation_EXCLUDES_Text_de=exclusion@de,Annotation_EXCLUDES_Text_it=exclusion@it"""
+required_columns = ["Code", "ParentCode", "Name_en", "Name_fr", "Name_de"]
+min_items = 1800
+fallback = "data/noga2025.ttl"

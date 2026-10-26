@@ -155,6 +155,32 @@ def _endpoint_for_uri(uri: str) -> str | None:
     return best
 
 
+def _scope(name: str) -> list[str]:
+    """Schemes an endpoint is restricted to (config key "schemes"); [] = no restriction."""
+    return ENDPOINTS.get(name, {}).get("schemes", [])
+
+
+def _scope_values(name: str, var: str) -> str:
+    s = _scope(name)
+    return f"VALUES {var} {{ {' '.join(_iri(u) for u in s)} }}" if s else ""
+
+
+def _check_scope(scheme: str) -> None:
+    ep = _endpoint_for_uri(scheme)
+    if ep and _scope(ep) and scheme not in _scope(ep):
+        raise ValueError(f"{scheme} is outside the classifications served here. "
+                         f"Schemes of {ep}: {_scope(ep)}")
+
+
+def _in_scope(uri: str, scheme: str = "") -> bool:
+    """Is a link target inside the configured network? Unknown publishers are out;
+    a known scheme outside an endpoint's allowlist is out."""
+    ep = _endpoint_for_uri(uri)
+    if not ep:
+        return False
+    return not (scheme and _scope(ep) and scheme not in _scope(ep))
+
+
 def _check_endpoint(name: str) -> None:
     if name not in ENDPOINTS:
         raise ValueError(f"Unknown or disabled endpoint {name!r}. Known: {sorted(ENDPOINTS)}")
@@ -217,6 +243,8 @@ async def list_endpoints() -> list[dict[str, Any]]:
         item = {"endpoint": name, "label": cfg.get("label", ""), "level": cfg.get("level", ""),
                 "country": cfg.get("country"), "type": t, "source": where,
                 "provenance": _provenance(name), "uri_prefixes": cfg.get("uri_prefixes", [])}
+        if _scope(name):
+            item["schemes"] = _scope(name)
         if name in _LIVE:
             item["live_status"] = _LIVE[name].status()
         if name in _WATCH and _WATCH[name].results:
@@ -238,8 +266,11 @@ async def list_schemes(
     if text:
         t = _lit(text.lower())
         flt = f'FILTER(CONTAINS(LCASE(STR(?label)), "{t}") || CONTAINS(LCASE(STR(?scheme)), "{t}"))'
-    q = f"""{PREFIXES}
+
+    def q(name: str) -> str:
+        return f"""{PREFIXES}
 SELECT DISTINCT ?scheme ?label WHERE {{
+  {_scope_values(name, "?scheme")}
   ?scheme a skos:ConceptScheme .
   OPTIONAL {{ ?scheme skos:prefLabel ?label .
              FILTER(LANGMATCHES(LANG(?label), "{_lit(lang)}") || LANG(?label) = "") }}
@@ -247,7 +278,7 @@ SELECT DISTINCT ?scheme ?label WHERE {{
 }} ORDER BY ?scheme LIMIT {min(limit, MAX_ROWS)}"""
     out: dict[str, Any] = {"schemes": [], "errors": {}}
     names = _targets(endpoint)
-    results = await asyncio.gather(*(_sparql_safe(n, q) for n in names))
+    results = await asyncio.gather(*(_sparql_safe(n, q(n)) for n in names))
     for name, (rows, err) in zip(names, results):
         if err:
             out["errors"][name] = err
@@ -273,24 +304,29 @@ async def find_concepts(
     """
     t = _lit(text.strip().lower())
     code = _lit(_norm_code(text))
-    scheme_clause = f"?c skos:inScheme {_iri(scheme)} ." if scheme else ""
     if scheme and not endpoint:
         endpoint = _endpoint_for_uri(scheme)
+    if scheme:
+        _check_scope(scheme)
     code_filter = (
         f'|| UCASE(REPLACE(STR(?code), "[^0-9A-Za-z]", "")) = "{code}"' if code else ""
     )
-    q = f"""{PREFIXES}
+
+    def q(name: str) -> str:
+        scheme_clause = (f"BIND({_iri(scheme)} AS ?scheme) ?c skos:inScheme ?scheme ." if scheme else
+                         f"{_scope_values(name, '?scheme')} ?c skos:inScheme ?scheme ." if _scope(name) else
+                         "OPTIONAL { ?c skos:inScheme ?scheme }")
+        return f"""{PREFIXES}
 SELECT DISTINCT ?c ?code ?label ?scheme WHERE {{
   {scheme_clause}
   ?c skos:prefLabel ?label .
   FILTER(LANGMATCHES(LANG(?label), "{_lit(lang)}") || LANG(?label) = "")
-  OPTIONAL {{ ?c skos:inScheme ?scheme }}
   {CODE_PATTERN.format(v="?c", out="?code")}
   FILTER(CONTAINS(LCASE(STR(?label)), "{t}") {code_filter})
 }} LIMIT {min(limit, MAX_ROWS)}"""
     out: dict[str, Any] = {"concepts": [], "errors": {}}
     names = _targets(endpoint)
-    results = await asyncio.gather(*(_sparql_safe(n, q) for n in names))
+    results = await asyncio.gather(*(_sparql_safe(n, q(n)) for n in names))
     for name, (rows, err) in zip(names, results):
         if err:
             out["errors"][name] = err
@@ -435,6 +471,10 @@ SELECT DISTINCT ?rel ?dir ?t ?ts ?code ?label ?note WHERE {{
                 **({"note": r["note"]} if r.get("note") else {}),
             })
     await _fill_target_labels(out["links"], lang)
+    before = len(out["links"])
+    out["links"] = [l for l in out["links"] if _in_scope(l["target"], l["target_scheme"])]
+    if before > len(out["links"]):
+        out["out_of_scope_links_hidden"] = before - len(out["links"])
     return out
 
 
@@ -489,6 +529,7 @@ async def match_by_code(
     link exists. Results are marked provenance="derived" and must not be
     presented as official correspondences.
     """
+    _check_scope(target_scheme)
     endpoint = endpoint or _endpoint_for_uri(target_scheme)
     if not endpoint:
         raise ValueError(f"No configured endpoint publishes {target_scheme}; pass endpoint=...")

@@ -110,11 +110,15 @@ def read_table(path: Path, sheet: str | None = None, no_header: bool = False) ->
             # fixed-width "Code          Description" layout (UNSD COFOG, COPNI, COPP, COICOP 1999)
             all_rows = [re.split(r"\s{2,}", l.strip(), maxsplit=1) for l in text.splitlines() if l.strip()]
         else:
-            try:
-                dialect = csv.Sniffer().sniff(text[:5000], delimiters=",;\t|")
-            except csv.Error:
-                dialect = csv.excel
-            all_rows = [[c.strip() for c in r] for r in csv.reader(io.StringIO(text), dialect)]
+            # standard CSV quoting (RFC 4180); only the delimiter is detected, from the
+            # header line: full dialect sniffing misreads quotes inside long text cells
+            counts = {d: first.count(d) for d in (",", ";", "\t", "|")}
+            delim = max(counts, key=counts.get) if max(counts.values()) else ","
+
+            class dialect(csv.excel):
+                delimiter = delim
+            # newline="": keep line breaks inside quoted cells (multi-line notes, as in I14Y exports)
+            all_rows = [[c.strip() for c in r] for r in csv.reader(io.StringIO(text, newline=""), dialect)]
     all_rows = [r for r in all_rows if any(r)]
     if no_header:
         width = max(len(r) for r in all_rows)
@@ -207,18 +211,29 @@ NOTE_TYPES = {"core": "coreContentNote", "additional": "additionalContentNote",
               "inclusion": "inclusionNote", "exclusion": "exclusionNote"}
 
 
-def parse_notes(spec, header: list[str]) -> list[tuple[int, str]]:
-    """'intro=core,excludes=exclusion' (or a dict) -> [(column index, xkos property)]."""
+def _pairs(spec):
+    return spec.items() if isinstance(spec, dict) else (p.split("=", 1) for p in spec.split(",") if "=" in p)
+
+
+def parse_notes(spec, header: list[str], default_lang: str = "en") -> list[tuple[int, str, str]]:
+    """'intro=core,Excl_fr=exclusion@fr' (or a dict) -> [(column index, xkos property, language)]."""
     if not spec:
         return []
-    pairs = spec.items() if isinstance(spec, dict) else (p.split("=", 1) for p in spec.split(",") if "=" in p)
     out = []
-    for col, kind in pairs:
-        kind = kind.strip().lower().replace("note", "").replace("content", "")
+    for col, kind in _pairs(spec):
+        kind, _, nlang = kind.strip().partition("@")
+        kind = kind.lower().replace("note", "").replace("content", "")
         if kind not in NOTE_TYPES:
             raise ConversionError(f"unknown note type {kind!r}; use one of {sorted(NOTE_TYPES)}")
-        out.append((pick(header, col.strip(), []), NOTE_TYPES[kind]))
+        out.append((pick(header, col.strip(), []), NOTE_TYPES[kind], nlang or default_lang))
     return out
+
+
+def parse_labels(spec, header: list[str]) -> list[tuple[int, str]]:
+    """'Name_en=en,Name_fr=fr' (or a dict) -> [(column index, language)]; the first is the main label."""
+    if not spec:
+        return []
+    return [(pick(header, col.strip(), []), lang.strip()) for col, lang in _pairs(spec)]
 
 
 def provenance(source_url: str | None, what: str, note: str | None = None) -> str:
@@ -233,12 +248,15 @@ def provenance(source_url: str | None, what: str, note: str | None = None) -> st
 def build_scheme(rows, code_i, label_i, base, sid, label, lang, source_url,
                  parent_i: int | None = None, key_style: str = "compact",
                  prov_note: str | None = None, key_i: int | None = None, note_i: int | None = None,
-                 scheme_extra: str = "", notes: list[tuple[int, str]] | None = None) -> tuple[str, int]:
+                 scheme_extra: str = "", notes: list[tuple] | None = None,
+                 labels: list[tuple[int, str]] | None = None) -> tuple[str, int]:
     """key_i: column holding an explicit URI key (used when the source prints the
     same code twice); note_i: column written as skos:editorialNote on each item;
     scheme_extra: extra Turtle predicate-object lines for the scheme;
-    notes: [(column, xkos property)] written as xkos:ExplanatoryNote resources."""
-    notes = notes or []
+    notes: [(column, xkos property[, language])] written as xkos:ExplanatoryNote resources;
+    labels: [(column, language)] extra skos:prefLabel columns (multilingual sources)."""
+    notes = [n if len(n) == 3 else (n[0], n[1], lang) for n in (notes or [])]
+    labels = labels or []
     scheme = f"<{base}{sid}/scheme>"
     out = [TTL_PREFIXES, f"{scheme} a skos:ConceptScheme ;\n    skos:prefLabel {lit(label)}@{lang} ;\n"
            f"{provenance(source_url, 'Classification', prov_note)}{scheme_extra} .\n"]
@@ -254,14 +272,16 @@ def build_scheme(rows, code_i, label_i, base, sid, label, lang, source_url,
         title = strip_code_prefix(r[label_i].strip(), code)
         praw = r[parent_i].strip() if parent_i is not None and len(r) > parent_i else ""
         note = r[note_i].strip() if note_i is not None and len(r) > note_i else ""
-        xnotes = [(prop, r[ci].strip()) for ci, prop in notes
-                  if len(r) > ci and r[ci].strip() and r[ci].strip().lower() != "none"]
-        items.append((k, code, title, praw, note, xnotes))
+        xnotes = [(prop, nlang, r[ci].strip()) for ci, prop, nlang in notes
+                  if len(r) > ci and r[ci].strip() and r[ci].strip().lower() not in ("none", "na")]
+        xlabels = [(llang, strip_code_prefix(r[ci].strip(), code)) for ci, llang in labels
+                   if ci != label_i and len(r) > ci and r[ci].strip() and r[ci].strip().lower() != "na"]
+        items.append((k, code, title, praw, note, xnotes, xlabels))
     keys = {k for k, *_ in items}
     seen: list[str] = []
     last_section: str | None = None
     n = 0
-    for k, code, title, praw, note, xnotes in items:
+    for k, code, title, praw, note, xnotes, xlabels in items:
         parent = None
         if parent_i is not None:
             pk = code_key(praw, key_style)
@@ -285,11 +305,13 @@ def build_scheme(rows, code_i, label_i, base, sid, label, lang, source_url,
         triples.append(f"    skos:broader <{base}{sid}/{parent}>" if parent else f"    skos:topConceptOf {scheme}")
         if note:
             triples.append(f"    skos:editorialNote {lit(note)}@en")
+        for llang, ltext in xlabels:
+            triples.append(f"    skos:prefLabel {lit(ltext)}@{llang}")
         note_blocks = []
-        for prop, text in xnotes:  # XKOS explanatory notes, modelled as INSEE and Eurostat do
-            nuri = f"<{base}{sid}/{k}/note/{prop}>"
+        for prop, nlang, text in xnotes:  # XKOS explanatory notes, modelled as INSEE and Eurostat do
+            nuri = f"<{base}{sid}/{k}/note/{prop}" + (f"/{nlang}>" if nlang != lang else ">")
             triples.append(f"    xkos:{prop} {nuri}")
-            note_blocks.append(f"{nuri} a xkos:ExplanatoryNote ;\n    xkos:plainText {lit_text(text)}@{lang} .\n")
+            note_blocks.append(f"{nuri} a xkos:ExplanatoryNote ;\n    xkos:plainText {lit_text(text)}@{nlang} .\n")
         out.append(" ;\n".join(triples) + " .\n")
         out.extend(note_blocks)
         n += 1
@@ -330,7 +352,7 @@ def convert(path: Path, mode: str = "scheme", *, id: str, label: str, lang: str 
             source_col=None, target_col=None, note_col=None, sheet=None, no_header: bool = False,
             filter_col=None, filter_value=None, fill_down=None, key_style: str = "compact",
             source_url: str | None = None, prov_note: str | None = None,
-            notes=None, skip_codes=None) -> tuple[str, int, str]:
+            notes=None, skip_codes=None, labels=None) -> tuple[str, int, str]:
     """Convert one file to Turtle. Returns (turtle, number of items or links, description).
     Used by the classif-unsd command and by live "file" endpoints in the server."""
     try:
@@ -341,14 +363,16 @@ def convert(path: Path, mode: str = "scheme", *, id: str, label: str, lang: str 
             li = pick(header, label_col, [r"title", r"desc", r"label", r"name", r"^text$"], {ci})
             pi = pick(header, parent_col, []) if parent_col else (
                 header.index("parent") if "parent" in header else None)
-            note_cols = parse_notes(notes, header)
+            note_cols = parse_notes(notes, header, lang)
+            label_cols = parse_labels(labels, header)
             skip = ({c.strip() for c in skip_codes.split(",")} if isinstance(skip_codes, str)
                     else set(skip_codes or []))
             if skip:  # aggregates such as "TOTAL" that are not classification items
                 rows = [r for r in rows if not (len(r) > ci and r[ci].strip() in skip)]
             info = (f"header={header}\ncode={header[ci]!r} label={header[li]!r} "
                     f"parent={header[pi] if pi is not None else None!r} "
-                    f"notes={[(header[c], p) for c, p in note_cols]} rows={len(rows)}")
+                    f"labels={[(header[c], l) for c, l in label_cols]} "
+                    f"notes={[(header[c], p, l) for c, p, l in note_cols]} rows={len(rows)}")
             if pi is not None:  # parents named in the file but absent from it: report, never invent
                 codes = {r[ci].strip() for r in rows if len(r) > ci}
                 missing = sorted({r[pi].strip() for r in rows if len(r) > pi and r[pi].strip()
@@ -358,7 +382,7 @@ def convert(path: Path, mode: str = "scheme", *, id: str, label: str, lang: str 
                     info += (f"\nWARNING: {n_orph} items name a parent that is not in the file "
                              f"({', '.join(missing[:10])}); they are kept at the top level, as published.")
             ttl, n = build_scheme(rows, ci, li, base.rstrip("/") + "/", id, label, lang, source_url,
-                                  pi, key_style, prov_note, notes=note_cols)
+                                  pi, key_style, prov_note, notes=note_cols, labels=label_cols)
         elif mode == "correspondence":
             if not (source_base and target_base):
                 raise ConversionError("source_base and target_base are required for a correspondence")
@@ -391,6 +415,7 @@ def main(argv: list[str] | None = None) -> None:
     s.add_argument("--lang", default="en")
     s.add_argument("--base", default=DEFAULT_BASE)
     s.add_argument("--code-col"); s.add_argument("--label-col"); s.add_argument("--parent-col")
+    s.add_argument("--labels", help='extra label columns by language, e.g. "Name_fr=fr,Name_de=de"')
     s.add_argument("--skip-codes", help='comma-separated codes to leave out, e.g. "TOTAL"')
     s.add_argument("--notes", help='explanatory notes as XKOS, e.g. "intro=core,includes=inclusion,'
                                    'alsoIncludes=additional,excludes=exclusion"')

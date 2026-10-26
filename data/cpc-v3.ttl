@@ -5538,7 +5538,7 @@
 <http://classif-mcp.local/unsd/cpc-v3/2509> a skos:Concept ;
     skos:inScheme <http://classif-mcp.local/unsd/cpc-v3/scheme> ;
     skos:notation "2509" ;
-    skos:prefLabel "Other manufactured tobacco and manufactured tobacco substitutes; \"homogenized\"\" or \"\"reconstituted\"\" tobacco; tobacco extracts and essences\""@en ;
+    skos:prefLabel "Other manufactured tobacco and manufactured tobacco substitutes; \"homogenized\" or \"reconstituted\" tobacco; tobacco extracts and essences"@en ;
     skos:broader <http://classif-mcp.local/unsd/cpc-v3/250> .
 
 <http://classif-mcp.local/unsd/cpc-v3/25091> a skos:Concept ;
@@ -9396,13 +9396,13 @@
 <http://classif-mcp.local/unsd/cpc-v3/3544> a skos:Concept ;
     skos:inScheme <http://classif-mcp.local/unsd/cpc-v3/scheme> ;
     skos:notation "3544" ;
-    skos:prefLabel "Modelling pastes; \"dental wax\"\" or \"\"dental impression compounds\"\"; other preparations for use in dentistry with a basis of plaster; preparations and charges for fire-extinguishers; charged fire-extinguishing grenades; prepared culture media for development and maintenance of micro-organisms and plant"@en ;
+    skos:prefLabel "Modelling pastes; \"dental wax\" or \"dental impression compounds\"; other preparations for use in dentistry with a basis of plaster; preparations and charges for fire-extinguishers; charged fire-extinguishing grenades; prepared culture media for development and maintenance of micro-organisms and plant, human or animal cells; composite diagnostic or laboratory reagents n.e.c."@en ;
     skos:broader <http://classif-mcp.local/unsd/cpc-v3/354> .
 
 <http://classif-mcp.local/unsd/cpc-v3/35440> a skos:Concept ;
     skos:inScheme <http://classif-mcp.local/unsd/cpc-v3/scheme> ;
     skos:notation "35440" ;
-    skos:prefLabel "Modelling pastes; \"dental wax\"\" or \"\"dental impression compounds\"\"; other preparations for use in dentistry with a basis of plaster; preparations and charges for fire-extinguishers; charged fire-extinguishing grenades; prepared culture media for development and maintenance of micro-organisms and plant"@en ;
+    skos:prefLabel "Modelling pastes; \"dental wax\" or \"dental impression compounds\"; other preparations for use in dentistry with a basis of plaster; preparations and charges for fire-extinguishers; charged fire-extinguishing grenades; prepared culture media for development and maintenance of micro-organisms and plant, human or animal cells; composite diagnostic or laboratory reagents n.e.c."@en ;
     skos:broader <http://classif-mcp.local/unsd/cpc-v3/3544> .
 
 <http://classif-mcp.local/unsd/cpc-v3/3545> a skos:Concept ;
@@ -9552,7 +9552,7 @@
 <http://classif-mcp.local/unsd/cpc-v3/3611> a skos:Concept ;
     skos:inScheme <http://classif-mcp.local/unsd/cpc-v3/scheme> ;
     skos:notation "3611" ;
-    skos:prefLabel "New pneumatic tyres, inner tubes, solid or cushion tyres, interchangeable tyre treads, tyre flaps and \"camel-back\"\""@en ;
+    skos:prefLabel "New pneumatic tyres, inner tubes, solid or cushion tyres, interchangeable tyre treads, tyre flaps and \"camel-back\", of rubber"@en ;
     skos:broader <http://classif-mcp.local/unsd/cpc-v3/361> .
 
 <http://classif-mcp.local/unsd/cpc-v3/36111> a skos:Concept ;
@@ -9582,7 +9582,7 @@
 <http://classif-mcp.local/unsd/cpc-v3/36115> a skos:Concept ;
     skos:inScheme <http://classif-mcp.local/unsd/cpc-v3/scheme> ;
     skos:notation "36115" ;
-    skos:prefLabel "\"Camel-back\"\" strips for retreading rubber tyres\""@en ;
+    skos:prefLabel "\"Camel-back\" strips for retreading rubber tyres"@en ;
     skos:broader <http://classif-mcp.local/unsd/cpc-v3/3611> .
 
 <http://classif-mcp.local/unsd/cpc-v3/3612> a skos:Concept ;
@@ -9618,13 +9618,13 @@
 <http://classif-mcp.local/unsd/cpc-v3/3622> a skos:Concept ;
     skos:inScheme <http://classif-mcp.local/unsd/cpc-v3/scheme> ;
     skos:notation "3622" ;
-    skos:prefLabel "Unvulcanized compounded rubber, in primary forms or in plates, sheets or strip; unvulcanized rubber in forms other than primary forms or plates, sheets or strip (except \"camel-back\"\" strips for retreading rubber tyres); articles of unvulcanized rubber; thread"@en ;
+    skos:prefLabel "Unvulcanized compounded rubber, in primary forms or in plates, sheets or strip; unvulcanized rubber in forms other than primary forms or plates, sheets or strip (except \"camel-back\" strips for retreading rubber tyres); articles of unvulcanized rubber; thread, cord, plates, sheets, strip, rods and profile shapes, of vulcanized rubber other than hard rubber"@en ;
     skos:broader <http://classif-mcp.local/unsd/cpc-v3/362> .
 
 <http://classif-mcp.local/unsd/cpc-v3/36220> a skos:Concept ;
     skos:inScheme <http://classif-mcp.local/unsd/cpc-v3/scheme> ;
     skos:notation "36220" ;
-    skos:prefLabel "Unvulcanized compounded rubber, in primary forms or in plates, sheets or strip; unvulcanized rubber in forms other than primary forms or plates, sheets or strip (except \"camel-back\"\" strips for retreading rubber tyres); articles of unvulcanized rubber; thread"@en ;
+    skos:prefLabel "Unvulcanized compounded rubber, in primary forms or in plates, sheets or strip; unvulcanized rubber in forms other than primary forms or plates, sheets or strip (except \"camel-back\" strips for retreading rubber tyres); articles of unvulcanized rubber; thread, cord, plates, sheets, strip, rods and profile shapes, of vulcanized rubber other than hard rubber"@en ;
     skos:broader <http://classif-mcp.local/unsd/cpc-v3/3622> .
 
 <http://classif-mcp.local/unsd/cpc-v3/3623> a skos:Concept ;
@@ -10776,13 +10776,13 @@
 <http://classif-mcp.local/unsd/cpc-v3/3845> a skos:Concept ;
     skos:inScheme <http://classif-mcp.local/unsd/cpc-v3/scheme> ;
     skos:notation "3845" ;
-    skos:prefLabel "Fishing rods and other line fishing tackle; fish landing nets, butterfly nets and similar nets; decoy \"birds\"\" and similar hunting or shooting requisites\""@en ;
+    skos:prefLabel "Fishing rods and other line fishing tackle; fish landing nets, butterfly nets and similar nets; decoy \"birds\" and similar hunting or shooting requisites"@en ;
     skos:broader <http://classif-mcp.local/unsd/cpc-v3/384> .
 
 <http://classif-mcp.local/unsd/cpc-v3/38450> a skos:Concept ;
     skos:inScheme <http://classif-mcp.local/unsd/cpc-v3/scheme> ;
     skos:notation "38450" ;
-    skos:prefLabel "Fishing rods and other line fishing tackle; fish landing nets, butterfly nets and similar nets; decoy \"birds\"\" and similar hunting or shooting requisites\""@en ;
+    skos:prefLabel "Fishing rods and other line fishing tackle; fish landing nets, butterfly nets and similar nets; decoy \"birds\" and similar hunting or shooting requisites"@en ;
     skos:broader <http://classif-mcp.local/unsd/cpc-v3/3845> .
 
 <http://classif-mcp.local/unsd/cpc-v3/385> a skos:Concept ;
@@ -10830,13 +10830,13 @@
 <http://classif-mcp.local/unsd/cpc-v3/3854> a skos:Concept ;
     skos:inScheme <http://classif-mcp.local/unsd/cpc-v3/scheme> ;
     skos:notation "3854" ;
-    skos:prefLabel "Toy electric trains and tracks, signals and other accessories therefor; reduced-size (\"scale\"\") model assembly kits and other construction sets and constructional toys\""@en ;
+    skos:prefLabel "Toy electric trains and tracks, signals and other accessories therefor; reduced-size (\"scale\") model assembly kits and other construction sets and constructional toys"@en ;
     skos:broader <http://classif-mcp.local/unsd/cpc-v3/385> .
 
 <http://classif-mcp.local/unsd/cpc-v3/38540> a skos:Concept ;
     skos:inScheme <http://classif-mcp.local/unsd/cpc-v3/scheme> ;
     skos:notation "38540" ;
-    skos:prefLabel "Toy electric trains and tracks, signals and other accessories therefor; reduced-size (\"scale\"\") model assembly kits and other construction sets and constructional toys\""@en ;
+    skos:prefLabel "Toy electric trains and tracks, signals and other accessories therefor; reduced-size (\"scale\") model assembly kits and other construction sets and constructional toys"@en ;
     skos:broader <http://classif-mcp.local/unsd/cpc-v3/3854> .
 
 <http://classif-mcp.local/unsd/cpc-v3/3855> a skos:Concept ;

@@ -1,22 +1,23 @@
 # classif-mcp
 
-An MCP server that links statistical classifications across the world, EU and
-national levels, as in Figure 1 of the NACE Rev. 2.1 methodology. The aim is
-that one question returns the answer at each level.
+An MCP server that links the integrated system of economic classifications across the world, EU and national levels, as in Figure 1 of the NACE Rev. 2.1 methodology (section 1.1). The aim is that one question returns the answer at each level.
 
-It queries each node at its source and reports, for every link, where that link
-is stated.
+It queries each node at its source and reports, for every link, where that link is stated. It is restricted to the classifications in Figure 1: searches, scheme lists and links outside them are not returned.
 
-| Level    | Source                                                    | How it is reached                                |
-|----------|-----------------------------------------------------------|--------------------------------------------------|
-| World    | Caliper (FAO), for ISIC and CPC as published there        | SPARQL endpoint `caliper`                        |
-| World    | UNSD files, for ISIC Rev. 5, CPC Ver. 3.0 and correspondences | fetched from UNSD and converted live, endpoint `unsd` |
-| World    | UNSD trade classifications: SITC Rev. 4, BEC Rev. 5, HS 2017 (older SITC and BEC versions optional) | converted live, endpoints `unsd_trade` and `unsd_trade_older` |
-| World    | UNSD purpose classifications: COICOP 2018 with its explanatory notes, COICOP 2018→1999, COFOG, COPNI, COPP | converted live, endpoint `unsd_purpose` |
-| World    | PDF-only classifications such as EBOPS 2010               | transcribed with `classif-pdf`, endpoint `extracted` |
-| EU       | Cellar / EU Vocabularies, for NACE, CPA, PRODCOM, CN and HS | SPARQL endpoint `cellar` |
-| National | INSEE, for NAF and CPF                                    | SPARQL endpoint `insee`                          |
-| National | I14Y (Switzerland), for NOGA                              | the existing `i14y-mcp` server, used alongside   |
+| Level | Classifications | Source | Tier | Endpoint |
+|---|---|---|---|---|
+| World | ISIC Rev. 4, CPC Ver. 2.1 and 2.0 | Caliper (FAO), SPARQL | 1 | `caliper` |
+| World | ISIC Rev. 5, CPC Ver. 3.0, SITC Rev. 4, and the ISIC Rev. 4 → Rev. 5 table | UNSD files, converted live | 2 | `unsd` |
+| World / EU | HS 2022 (published inside the CN 2026 graph) | Cellar, SPARQL | 1 | `cellar` |
+| EU | NACE Rev. 2.1 and Rev. 2, CPA 2.2 and 2.1, PRODCOM 2026, CN 2026 | Cellar (EU Vocabularies), SPARQL | 1 | `cellar` |
+| National (FR) | NAF 2025, NAF rév. 2, CPF rév. 2.1 | INSEE, SPARQL | 1 | `insee` |
+| National (CH) | NOGA 2025 | FSO code list on I14Y, converted live | 2 | `i14y` |
+
+Previous versions are kept where they carry the published links between generations:
+
+NACE Rev. 2.1 → NACE Rev. 2 → ISIC Rev. 4 → ISIC Rev. 5
+
+Each endpoint's `schemes` list in `endpoints.toml` defines the scope.
 
 ## Three tiers of sources
 
@@ -26,7 +27,7 @@ How a classification is brought in depends on how its publisher releases it:
 |------|--------------|-------------------------|------------------|
 | 1 | RDF (SKOS/XKOS) with a SPARQL endpoint | Queried live; the publisher's URIs | **published** |
 | 2 | CSV, TXT, Excel (.xlsx/.xls) or JSON | Fetched from the publisher and converted in memory, rechecked every `refresh_hours` (`type = "file"`); or converted once with `classif-unsd` (`type = "local"`) | **converted** |
-| 3 | PDF only | Transcribed once with `classif-pdf`. Two independent readings are compared, and a person checks only the rows where they differ or a check fails. The PDF is watched for new versions. | **extracted** |
+| 3 | PDF only | Transcribed once with `classif-pdf`. Two independent readings are compared, and a person checks only the rows where they differ or a check fails. The PDF is watched for new versions. No Figure 1 classification needs this tier. | **extracted** |
 
 Two rules apply:
 
@@ -233,9 +234,10 @@ Everything below is done in a web browser. Nothing is installed locally.
 
 ## Demo prompt
 
-"Where is computer programming classified at world, EU and national level, for
-the 2025 generation of classifications? For each level give the code, label and
-URI. Say for each link whether it is published, converted or derived."
+"Use only the classif-mcp connector: where is computer programming classified at
+world, EU and national level (France and Switzerland), for the 2025 generation of
+classifications? For each level give the code, label and URI. Say for each link
+whether it is published, converted or derived."
 
 ## Configuration
 
@@ -247,65 +249,53 @@ Endpoints are declared in `endpoints.toml`:
   - `CLASSIF_MCP_TIMEOUT`: request timeout in seconds, default 45.
   - `CLASSIF_MCP_MAX_ROWS`: maximum rows per query, default 200.
 
-## Verified against the live sources (23 October 2026)
+## Verified against the live sources (26 October 2026)
 
 **Caliper**
-- Holds ISIC Rev. 4, CPC v2.0 and v2.1, COICOP 1999 and the FAO classifications.
-- Does **not** hold ISIC Rev. 5 or CPC Ver. 3.0.
+- Holds ISIC Rev. 4 and CPC v2.0 and v2.1. Does **not** hold ISIC Rev. 5 or CPC Ver. 3.0.
 - Codes are in `skos:notation`.
-- Publishes 996 `skos:closeMatch` links from ISIC Rev. 4 to NACE Rev. 2 (`data.europa.eu/ux2/nace2/...`) and 1,242 from CPC v2.1 to CPA 2.1.
-- Holds 31 XKOS correspondence tables.
+- Publishes 996 `skos:closeMatch` links from ISIC Rev. 4 to NACE Rev. 2, and 1,242 from CPC v2.1 to CPA 2.1.
 
 **Cellar**
 - NACE Rev. 2.1 links back to NACE Rev. 2 (`closeMatch`, plus XKOS associations).
-- NACE Rev. 2 links to ISIC Rev. 4, CPA, and the Classification of Business Functions.
+- NACE Rev. 2 links to ISIC Rev. 4 and to CPA.
+- CPA, PRODCOM 2026, CN 2026 and HS 2022 are linked to each other.
 - There is **no** published link between NACE Rev. 2.1 and ISIC Rev. 5.
 
 **INSEE**
-- Publishes NAF 2025 (`http://id.insee.fr/codes/naf2025/naf`), with `skos:notation`, labels in French and English, and XKOS notes.
-- There is **no** link from NAF 2025 to NACE, so NAF→NACE is a *derived* link (`match_by_code`).
+- Publishes NAF 2025, NAF rév. 2 and CPF rév. 2.1, with `skos:notation`, labels in French and English, and XKOS notes.
+- Publishes a NAF rév. 2 → CPF rév. 2.1 correspondence.
+- CPF rév. 2.1 (5,522 items) is the most recent CPF on rdf.insee.fr.
+- There is **no** link from NAF or CPF to NACE or CPA, so NAF→NACE and CPF→CPA are *derived* links (`match_by_code`).
 
-**UNSD files**, converted with `classif-unsd` into `data/`:
+**I14Y (FSO)**
+- NOGA 2025 is code list `nogaCode` version 2.0.1, valid from 6 March 2026, status PreferredStandard.
+- Its CSV export has 1,845 items: 22 sections, 87 divisions, 287 groups, 651 classes (the same as NACE Rev. 2.1) and 798 Swiss 6-digit types.
+- It has an explicit ParentCode, labels in de/fr/it/en, and includes, includes-also and excludes notes.
+- There is no link column to NACE, so NOGA→NACE is *derived*: 621000 → 62.10.
+- The older code lists NOGA_SECTION … NOGA_TYPE (version 3.x, valid from 2008) describe NOGA 2008 and are not used.
+
+**UNSD files**, converted live:
 - ISIC Rev. 5: 830 items, with a complete hierarchy.
 - CPC Ver. 3.0: 4,586 items.
-- ISIC Rev. 4→5: 605 links, each carrying the GSIM type of change.
-- For the correspondence, run with `--source-col "ISIC Rev. 4 Code" --target-col "ISIC Rev. 5 Code"`. Its Rev. 4 side points to Caliper's published ISIC Rev. 4 URIs, so the chain connects.
+- SITC Rev. 4: 4,011 items, from `SITCCodeandDescription.xlsx`, sheet SITC4, with an explicit Parent Code column.
+- ISIC Rev. 4→5: 605 links, each carrying the GSIM type of change. Its Rev. 4 side points to Caliper's ISIC Rev. 4 URIs, so the chain connects.
 
-**Other UNSD classifications**, checked against the real files:
+**Out of scope here** (not in Figure 1): BEC, COICOP, COFOG, COPNI, COPP, EBOPS, the Classification of Business Functions, and the FAO classifications. The converter and `classif-pdf` support them if the scope is widened.
 
-| Classification | Tier | Notes |
-|---|---|---|
-| COICOP 1999 | 1 (Caliper) | UNSD's TXT is not used. Its range codes such as "01-12" would also collide with "01.1.2". |
-| ICATUS 2016 | 1 (Caliper) | |
-| HS 2022 | 1 (Cellar) | Published inside the CN graph. |
-| SITC Rev. 4 / 3 / 2 | 2 | `SITCCodeandDescription.xlsx`, one sheet per revision, with an explicit Parent Code column. It has the same content as the UN Comtrade JSON. |
-| SITC Rev. 1 | 2 | `.xls` without a header row. |
-| BEC Rev. 5 / 4 | 2 | `BECCodeandDescription.xlsx`. |
-| HS 2017 | 2 | `HSCodeandDescription.xlsx`, sheet HS17. |
-| COICOP 2018 | 2 | With intro, includes, also-includes and excludes as XKOS notes. |
-| COICOP 2018 → 1999 | 2 | 458 links, pointing to Caliper's COICOP 1999 URIs. All 174 targets exist there. |
-| COFOG, COPNI, COPP | 2 | Fixed-width TXT. |
-| EBOPS 2010 / 2002, Classification of Business Functions, ISIC Rev. 1, ISIC 1949, SITC 1950 | 3 | PDF only. |
+**Anomaly found in the UNSD files**, to report to chl@un.org: in the SITC Rev. 4 sheet, 12 items name divisions 09, 28 and 91 as their parent, but those three division rows are missing.
 
-**Anomalies found in the UNSD files**, to report to chl@un.org:
-- **SITC Rev. 4 sheet:** 12 items name divisions 09, 28 and 91 as their parent, but those three division rows are missing from the sheet.
-- **SITC Rev. 2 sheet:** the first data row is labelled "SIT" instead of "S2" in the Classification column.
+**Memory.** All sources loaded together use about 200 MB, within Render's free tier (512 MB). Endpoints load on their first query.
 
-**Memory**
-- All UNSD data loaded together uses about 200 MB.
-- The defaults (`unsd`, `unsd_trade`, `unsd_purpose`) use about 135 MB plus the server itself, which fits Render's free tier (512 MB).
-- `unsd_trade_older` is off by default and adds about 50 MB.
-- Endpoints load on their first query.
-
-**Labels across publishers.** `get_correspondences` fetches a missing label from the endpoint that publishes the target. For example, COICOP 2018 → 1999 shows Caliper's 1999 label, and ISIC Rev. 4 → NACE Rev. 2 shows Cellar's NACE label.
+**Labels across publishers.** `get_correspondences` fetches a missing label from the endpoint that publishes the target. For example, ISIC Rev. 4 → NACE Rev. 2 shows Cellar's NACE label.
 
 **Endpoint URLs** are given without a trailing slash. The trailing-slash forms on Caliper and INSEE serve the web query UI, not the API.
 
 **One fact to know for any demo.** ISIC Rev. 5 has **no class 62.10**. UNSD broke ISIC Rev. 4 class 6201 down (GSIM RC4.1) into:
-- 6211, development of video games, video game software and video game software tools
-- 6219, other computer programming activities
+- 6211, development of video games, video game software and video game software tools;
+- 6219, other computer programming activities.
 
-NACE Rev. 2.1 kept a single class, 62.10. The codes look alike, but EU 62.10 ≠ UN 62.10. Without a published NACE 2.1–ISIC 5 table, the only traceable path between them goes through the previous versions:
+NACE Rev. 2.1 (and NOGA 2025, NAF 2025) kept a single class, 62.10. Without a published NACE 2.1–ISIC 5 table, the only traceable path between them goes through the previous versions:
 
 NACE 2.1 62.10 → NACE 2 62.01 → ISIC 4 6201 → ISIC 5 6211 / 6219
 
@@ -315,7 +305,7 @@ NACE 2.1 62.10 → NACE 2 62.01 → ISIC 4 6201 → ISIC 5 6211 / 6219
 - all tools over the MCP protocol, both locally and as a remote HTTP server, against the live Caliper, Cellar and INSEE endpoints;
 - `classif-unsd` on the real UNSD files: ISIC Rev. 5, CPC Ver. 3.0 and ISIC 4→5 (CSV/XLSX), SITC Rev. 1 (.xls, no header) and EBOPS 2010–CPC 2.0 (.xls, grouped rows);
 - `classif-pdf` on the real EBOPS 2010 PDF, including `compare` with a second, simulated reading;
-- live `file` endpoints against unstats.un.org. This covered first fetch, conditional refresh (304), a renamed column, a missing file, a size jump, and fallback to the last good copy. The live result is identical to the converted files: 29,869 triples;
+- live `file` endpoints against unstats.un.org and api.i14y.admin.ch (NOGA 2025). This covered first fetch, conditional refresh (304), a renamed column, a missing file, a size jump, and fallback to the last good copy. The live result is identical to the converted files: 29,869 triples;
 - the PDF change watch, against the real EBOPS PDF and against a tampered fingerprint.
 
 **Not tested against real files:**
@@ -327,4 +317,5 @@ Known limits:
 - **Search speed.** On large endpoints, `find_concepts` without a `scheme` can be slow. Pass a scheme URI.
 - **Following links.** `get_correspondences` returns one hop at a time. The LLM chains the hops, and should say when a path goes through earlier versions.
 - **UNSD page.** It was only partly checked for further correspondence tables involving ISIC Rev. 5 or CPC Ver. 3.0. None were found in the part read.
-- **Data reuse.** The files in `data/` are conversions of UNSD files. UNSD's terms of use apply to them.
+- **Data reuse.** The files in `data/` are conversions of UNSD and FSO files. The publishers' terms of use apply to them.
+- **NOGA version.** The I14Y URL names one version of the code list. When the FSO publishes a new one, replace the concept id in `endpoints.toml`.
