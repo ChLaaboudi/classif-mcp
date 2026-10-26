@@ -36,15 +36,23 @@ schemes = [
 # UNSD whether a file changed (ETag) every refresh_hours; a new version is used
 # only if it passes the checks (required_columns, min_items, max_change).
 # Otherwise the last good copy is kept, then the cache, then the fallback file.
-# HS is not here: HS 2022 is published as RDF in Cellar (tier 1).
+# HS is not here: HS 2022 and HS 2017 are published as RDF in Cellar (tier 1).
+# Correspondence tables of the integrated system (UNSD diagram), most recent versions:
+#   ISIC Rev. 4 - CPC 2.1   NOT here: Caliper publishes it as linked data (tier 1),
+#                           same 2,663 pairs as UNSD's isic4-cpc21.txt
+#   ISIC Rev. 4 - Rev. 5    below
+#   CPC 2.1 - HS 2017       below; targets Cellar's HS 2017 items
+#   HS 2022 - HS 2017       below; bridges the CPC table (HS 2017) to the SITC table (HS 2022)
+#   HS 2022 - SITC Rev. 4   below; sources Cellar's HS 2022 items
+# A Cellar HS item is the CN item of the same code: {code} + "000080" under the CN graph.
 [endpoints.unsd]
 type = "file"
-label = "UNSD files, converted live (ISIC Rev. 5, CPC Ver. 3.0, SITC Rev. 4, ISIC Rev. 4 - Rev. 5)"
+label = "UNSD files, converted live (ISIC Rev. 5, CPC Ver. 3.0, SITC Rev. 4, and correspondence tables)"
 level = "world"
 provenance = "converted live from the UNSD file (not official linked data; see dct:source)"
 refresh_hours = 24
 uri_prefixes = ["http://classif-mcp.local/unsd/isic", "http://classif-mcp.local/unsd/cpc",
-                "http://classif-mcp.local/unsd/sitc", "http://classif-mcp.local/unsd/correspondence/isic"]
+                "http://classif-mcp.local/unsd/sitc", "http://classif-mcp.local/unsd/correspondence/"]
 
 [[endpoints.unsd.sources]]
 url = "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/ISIC_Rev_5_english_structure.csv"
@@ -91,6 +99,56 @@ required_columns = ["ISIC Rev. 4 Code", "ISIC Rev. 5 Code"]
 min_items = 600
 fallback = "data/isic4-isic5.ttl"
 
+[[endpoints.unsd.sources]]
+url = "https://unstats.un.org/unsd/classifications/Econ/tables/CPC/CPCv21_HS2017/CPC21-HS2017.csv"
+mode = "correspondence"
+id = "cpc21-hs2017"
+label = "CPC Ver. 2.1 - HS 2017"
+source_col = "CPC Ver. 2.1"
+target_col = "HS 2017"
+note_col = "CPC partial,HS partial"
+source_base = "https://unstats.un.org/classifications/CPC/v2.1/"
+target_base = "http://data.europa.eu/xsp/cn2017/"
+target_suffix = "000080"
+required_columns = ["CPC Ver. 2.1", "HS 2017", "CPC partial", "HS partial"]
+min_items = 5500
+fallback = "data/cpc21-hs2017.ttl"
+
+[[endpoints.unsd.sources]]
+url = "https://unstats.un.org/unsd/classifications/Econ/tables/HS2022toHS2017ConversionAndCorrelationTables.xlsx"
+mode = "correspondence"
+sheet = "HS2022-HS2017 Correlations"
+header_row = 2
+id = "hs2022-hs2017"
+label = "HS 2022 - HS 2017"
+source_col = "HS2022"
+target_col = "HS2017"
+note_col = "Relationship"
+source_base = "http://data.europa.eu/xsp/cn2026/"
+source_suffix = "000080"
+target_base = "http://data.europa.eu/xsp/cn2017/"
+target_suffix = "000080"
+required_columns = ["HS2022", "HS2017", "Relationship"]
+min_items = 15000
+fallback = "data/hs2022-hs2017.ttl"
+
+[[endpoints.unsd.sources]]
+url = "https://unstats.un.org/unsd/classifications/Econ/tables/HS2022toSITC4ConversionAndCorrelationTables.xlsx"
+mode = "correspondence"
+sheet = "Correlation HS22-SITC4"
+header_row = 2
+id = "hs2022-sitc4"
+label = "HS 2022 - SITC Rev. 4"
+source_col = "HS 2022"
+target_col = "SITC Rev. 4"
+note_col = "Relationship"
+source_base = "http://data.europa.eu/xsp/cn2026/"
+source_suffix = "000080"
+target_base = "http://classif-mcp.local/unsd/sitc-rev4/"
+required_columns = ["HS 2022", "SITC Rev. 4", "Relationship"]
+min_items = 12500
+fallback = "data/hs2022-sitc4.ttl"
+
 # ---------------------------------------------------------------- EU, tier 1
 
 [endpoints.cellar]
@@ -104,8 +162,10 @@ schemes = [
   "http://data.europa.eu/ehl/cpa22/cpa22",
   "http://data.europa.eu/ehl/cpa21/cpa21",
   "http://data.europa.eu/qw1/prodcom2026/prodcom2026",
-  "http://data.europa.eu/xsp/cn2026/cn2026",
+  # HS before CN: an HS subheading is also a CN item and is reported in the first listed scheme
   "http://data.europa.eu/xsp/cn2026/hs2022",
+  "http://data.europa.eu/xsp/cn2017/hs2017",
+  "http://data.europa.eu/xsp/cn2026/cn2026",
 ]
 
 # ---------------------------------------------------------------- national, tier 1

@@ -8,7 +8,7 @@ It queries each node at its source and reports, for every link, where that link 
 |---|---|---|---|---|
 | World | ISIC Rev. 4, CPC Ver. 2.1 and 2.0 | Caliper (FAO), SPARQL | 1 | `caliper` |
 | World | ISIC Rev. 5, CPC Ver. 3.0, SITC Rev. 4, and the ISIC Rev. 4 → Rev. 5 table | UNSD files, converted live | 2 | `unsd` |
-| World / EU | HS 2022 (published inside the CN 2026 graph) | Cellar, SPARQL | 1 | `cellar` |
+| World / EU | HS 2022 and HS 2017 (published inside the CN 2026 and CN 2017 graphs) | Cellar, SPARQL | 1 | `cellar` |
 | EU | NACE Rev. 2.1 and Rev. 2, CPA 2.2 and 2.1, PRODCOM 2026, CN 2026 | Cellar (EU Vocabularies), SPARQL | 1 | `cellar` |
 | National (FR) | NAF 2025, NAF rév. 2, CPF rév. 2.1 | INSEE, SPARQL | 1 | `insee` |
 | National (CH) | NOGA 2025 | FSO code list on I14Y, converted live | 2 | `i14y` |
@@ -16,6 +16,31 @@ It queries each node at its source and reports, for every link, where that link 
 Previous versions are kept where they carry the published links between generations:
 
 NACE Rev. 2.1 → NACE Rev. 2 → ISIC Rev. 4 → ISIC Rev. 5
+
+## Correspondence tables of the integrated system
+
+These are the tables in UNSD's diagram of the integrated system of economic statistical classifications, in their most recent versions:
+
+| Link | Source | Tier | Links |
+|---|---|---|---|
+| ISIC Rev. 4 ↔ CPC 2.1 | Caliper, as linked data (`closeMatch` / `exactMatch`). It has the same 2,663 pairs as UNSD's `isic4-cpc21.txt`, so the file is not converted. UNSD's readme notes that ISIC divisions 45–47 are not covered. | 1 | 2,663 |
+| ISIC Rev. 4 → Rev. 5 | UNSD table, with the GSIM type of change | 2 | 605 |
+| CPC 2.1 → HS 2017 | UNSD `CPC21-HS2017.csv`, with its CPC and HS "partial" flags. It points to Caliper's CPC URIs and to Cellar's HS 2017 items. | 2 | 5,843 |
+| HS 2022 ↔ HS 2017 | UNSD correlation table, with the relationship (1:1, n:1, 1:n, n:n). It bridges the CPC table (HS 2017) to the SITC table (HS 2022). | 2 | 15,657 |
+| HS 2022 → SITC Rev. 4 | UNSD correlation table, with the relationship. It points to Cellar's HS 2022 items. | 2 | 13,191 |
+| ISIC Rev. 4 → NACE Rev. 2, NACE Rev. 2 → CPA, CPA → CN/HS, PRODCOM ↔ CN | Caliper and Cellar, as linked data | 1 | |
+
+**HS items in Cellar.** An HS subheading is identified by the CN item of the same code: the code is padded with zeros and followed by the suffix "80" under the CN graph. For example, HS 2022 9403 60 is `http://data.europa.eu/xsp/cn2026/940360000080`. The converter writes this with `target_suffix` / `source_suffix = "000080"`.
+
+**Checked** (26 October 2026):
+- every CPC code (1,617) exists in Caliper;
+- every HS 2017 code (5,387) exists in Cellar;
+- every SITC code (2,969) exists in the converted SITC Rev. 4;
+- every HS 2022 code exists in Cellar except "999999", UN Comtrade's code for commodities not specified, which isn't an HS code.
+
+**Not available from UNSD:** ISIC Rev. 5 ↔ CPC Ver. 3.0, or CPC Ver. 3.0 ↔ HS 2022.
+
+**Example chain:** ISIC Rev. 4 3100 (furniture) → CPC 2.1 38140 → HS 2017 9403.60 → HS 2022 9403 60 → SITC Rev. 4 82159 "Furniture, n.e.s., of wood".
 
 Each endpoint's `schemes` list in `endpoints.toml` defines the scope.
 
@@ -280,14 +305,17 @@ Endpoints are declared in `endpoints.toml`:
 - CPC Ver. 3.0: 4,586 items.
 - SITC Rev. 4: 4,011 items, from `SITCCodeandDescription.xlsx`, sheet SITC4, with an explicit Parent Code column.
 - ISIC Rev. 4→5: 605 links, each carrying the GSIM type of change. Its Rev. 4 side points to Caliper's ISIC Rev. 4 URIs, so the chain connects.
+- CPC 2.1→HS 2017, HS 2022↔HS 2017 and HS 2022→SITC Rev. 4: see "Correspondence tables" above.
 
 **Out of scope here** (not in Figure 1): BEC, COICOP, COFOG, COPNI, COPP, EBOPS, the Classification of Business Functions, and the FAO classifications. The converter and `classif-pdf` support them if the scope is widened.
 
 **Anomaly found in the UNSD files**, to report to chl@un.org: in the SITC Rev. 4 sheet, 12 items name divisions 09, 28 and 91 as their parent, but those three division rows are missing.
 
-**Memory.** All sources loaded together use about 200 MB, within Render's free tier (512 MB). Endpoints load on their first query.
+**Memory.** The in-memory store is Oxigraph, a compiled RDF store with full SPARQL. With every source and table loaded (about 264,000 triples), the server uses about 280 MB, within Render's free tier (512 MB). The same data held in rdflib needed 485 MB. Endpoints load on their first query, which takes about 10 seconds for all UNSD files.
 
-**Labels across publishers.** `get_correspondences` fetches a missing label from the endpoint that publishes the target. For example, ISIC Rev. 4 → NACE Rev. 2 shows Cellar's NACE label.
+**Labels across publishers.** `get_correspondences` fetches the label and scheme of a target from the endpoint that publishes it. For example, ISIC Rev. 4 → NACE Rev. 2 shows Cellar's NACE label. An item in two schemes, such as an HS subheading that is also a CN item, is reported in the first scheme listed in `endpoints.toml`.
+
+**Hidden links.** Links into classifications outside the scope are not returned; the response counts them as `out_of_scope_links_hidden`. Examples are FAO's forest products classification, the Classification of Business Functions, and FAO mirror URIs. Some of Caliper's CPC 2.1 → CPA 2.1 links also use an older Publications Office URI form (`publications.europa.eu/resource/authority/cpa21/…`). These are hidden, while the same links with `data.europa.eu` URIs are shown.
 
 **Endpoint URLs** are given without a trailing slash. The trailing-slash forms on Caliper and INSEE serve the web query UI, not the API.
 
@@ -305,6 +333,7 @@ NACE 2.1 62.10 → NACE 2 62.01 → ISIC 4 6201 → ISIC 5 6211 / 6219
 - all tools over the MCP protocol, both locally and as a remote HTTP server, against the live Caliper, Cellar and INSEE endpoints;
 - `classif-unsd` on the real UNSD files: ISIC Rev. 5, CPC Ver. 3.0 and ISIC 4→5 (CSV/XLSX), SITC Rev. 1 (.xls, no header) and EBOPS 2010–CPC 2.0 (.xls, grouped rows);
 - `classif-pdf` on the real EBOPS 2010 PDF, including `compare` with a second, simulated reading;
+- the full chain ISIC → CPC → HS 2017 → HS 2022 → SITC, over HTTP with concurrent calls;
 - live `file` endpoints against unstats.un.org and api.i14y.admin.ch (NOGA 2025). This covered first fetch, conditional refresh (304), a renamed column, a missing file, a size jump, and fallback to the last good copy. The live result is identical to the converted files: 29,869 triples;
 - the PDF change watch, against the real EBOPS PDF and against a tampered fingerprint.
 
@@ -314,7 +343,7 @@ NACE 2.1 62.10 → NACE 2 62.01 → ISIC 4 6201 → ISIC 5 6211 / 6219
 
 Known limits:
 
-- **Search speed.** On large endpoints, `find_concepts` without a `scheme` can be slow. Pass a scheme URI.
+- **Search speed.** On the remote SPARQL endpoints, `find_concepts` without a `scheme` can take 20–30 seconds. Pass a scheme URI.
 - **Following links.** `get_correspondences` returns one hop at a time. The LLM chains the hops, and should say when a path goes through earlier versions.
 - **UNSD page.** It was only partly checked for further correspondence tables involving ISIC Rev. 5 or CPC Ver. 3.0. None were found in the part read.
 - **Data reuse.** The files in `data/` are conversions of UNSD and FSO files. The publishers' terms of use apply to them.

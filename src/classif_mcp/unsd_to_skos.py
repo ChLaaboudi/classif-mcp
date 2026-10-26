@@ -80,7 +80,8 @@ def _read_json(path: Path) -> tuple[list[str], list[list[str]]]:
     return header, [[_cell(rec.get(k)) for k in header] for rec in data]
 
 
-def read_table(path: Path, sheet: str | None = None, no_header: bool = False) -> tuple[list[str], list[list[str]]]:
+def read_table(path: Path, sheet: str | None = None, no_header: bool = False,
+               header_row: int | None = None) -> tuple[list[str], list[list[str]]]:
     """Return (header, rows) from a CSV/TXT, XLSX, XLS or JSON file."""
     suffix = path.suffix.lower()
     if suffix == ".json":
@@ -123,6 +124,8 @@ def read_table(path: Path, sheet: str | None = None, no_header: bool = False) ->
     if no_header:
         width = max(len(r) for r in all_rows)
         return [str(i) for i in range(width)], all_rows
+    if header_row:  # 1-based, counted over non-empty rows
+        return all_rows[header_row - 1], all_rows[header_row:]
     for i, r in enumerate(all_rows[:20]):  # header = first row mentioning "code"
         if any("code" in c.lower() for c in r):
             return r, all_rows[i + 1:]
@@ -319,23 +322,30 @@ def build_scheme(rows, code_i, label_i, base, sid, label, lang, source_url,
 
 
 def build_correspondence(rows, src_i, tgt_i, src_base, tgt_base, cid, label, source_url,
-                         note_i: int | None = None, key_style: str = "compact") -> tuple[str, int]:
+                         note_i=None, key_style: str = "compact", header: list[str] | None = None,
+                         src_suffix: str = "", tgt_suffix: str = "") -> tuple[str, int]:
+    """note_i: one column index or a list; several columns are written as "name=value; ...".
+    src_suffix / tgt_suffix: appended to the code in the URI (e.g. Cellar's HS items:
+    http://data.europa.eu/xsp/cn2026/ + 010129 + 000080)."""
     corr = f"<{DEFAULT_BASE}correspondence/{cid}>"
     out = [TTL_PREFIXES, f"{corr} a xkos:Correspondence ;\n    skos:prefLabel {lit(label)}@en ;\n"
            f"{provenance(source_url, 'Correspondence table')} .\n"]
+    note_is = [] if note_i is None else (note_i if isinstance(note_i, list) else [note_i])
     pairs: dict[tuple[str, str], str] = {}
     for r in rows:
         if len(r) <= max(src_i, tgt_i):
             continue
         s, t = code_key(r[src_i], key_style), code_key(r[tgt_i], key_style)
         if s and t:
-            note = r[note_i].strip() if note_i is not None and len(r) > note_i else ""
+            vals = [(header[c] if header and len(note_is) > 1 else "", r[c].strip())
+                    for c in note_is if len(r) > c and r[c].strip()]
+            note = "; ".join(f"{h}={v}" if h else v for h, v in vals)
             pairs.setdefault((s, t), note)
     for i, ((s, t), note) in enumerate(sorted(pairs.items())):
         a = f"<{DEFAULT_BASE}correspondence/{cid}/{i}>"
         extra = f" ;\n    rdfs:comment {lit(note)}@en" if note else ""
-        out.append(f"{a} a xkos:ConceptAssociation ;\n    xkos:sourceConcept <{src_base}{s}> ;\n"
-                   f"    xkos:targetConcept <{tgt_base}{t}>{extra} .\n{corr} xkos:madeOf {a} .\n")
+        out.append(f"{a} a xkos:ConceptAssociation ;\n    xkos:sourceConcept <{src_base}{s}{src_suffix}> ;\n"
+                   f"    xkos:targetConcept <{tgt_base}{t}{tgt_suffix}>{extra} .\n{corr} xkos:madeOf {a} .\n")
     return "\n".join(out), len(pairs)
 
 
@@ -352,11 +362,12 @@ def convert(path: Path, mode: str = "scheme", *, id: str, label: str, lang: str 
             source_col=None, target_col=None, note_col=None, sheet=None, no_header: bool = False,
             filter_col=None, filter_value=None, fill_down=None, key_style: str = "compact",
             source_url: str | None = None, prov_note: str | None = None,
-            notes=None, skip_codes=None, labels=None) -> tuple[str, int, str]:
+            notes=None, skip_codes=None, labels=None, header_row: int | None = None,
+            source_suffix: str = "", target_suffix: str = "") -> tuple[str, int, str]:
     """Convert one file to Turtle. Returns (turtle, number of items or links, description).
     Used by the classif-unsd command and by live "file" endpoints in the server."""
     try:
-        header, rows = read_table(Path(path), sheet, no_header)
+        header, rows = read_table(Path(path), sheet, no_header, header_row)
         rows = prepare_rows(rows, header, filter_col, filter_value, fill_down)
         if mode == "scheme":
             ci = pick(header, code_col, [r"code", r"^id$"])
@@ -388,11 +399,17 @@ def convert(path: Path, mode: str = "scheme", *, id: str, label: str, lang: str 
                 raise ConversionError("source_base and target_base are required for a correspondence")
             si = pick(header, source_col, [r"code"])
             ti = pick(header, target_col, [r"code"], {si})
-            ni = pick(header, note_col, []) if note_col else None
+            note_names = ([c.strip() for c in note_col.split(",")] if isinstance(note_col, str)
+                          else list(note_col or []))
+            # a single name may itself contain commas: try it whole first
+            if isinstance(note_col, str) and note_col in header:
+                note_names = [note_col]
+            ni = [pick(header, c, []) for c in note_names]
             info = (f"header={header}\nsource={header[si]!r} target={header[ti]!r} "
-                    f"note={header[ni] if ni is not None else None!r} rows={len(rows)}")
+                    f"notes={[header[i] for i in ni]} rows={len(rows)}")
             ttl, n = build_correspondence(rows, si, ti, source_base, target_base, id, label,
-                                          source_url, ni, key_style)
+                                          source_url, ni or None, key_style, header,
+                                          source_suffix, target_suffix)
         else:
             raise ConversionError(f"unknown mode {mode!r}")
     except SystemExit as e:  # pick() exits with a message in CLI use
@@ -427,12 +444,17 @@ def main(argv: list[str] | None = None) -> None:
     c.add_argument("--source-base", required=True, help="URI base of source items, ending with /")
     c.add_argument("--target-base", required=True, help="URI base of target items, ending with /")
     c.add_argument("--source-col"); c.add_argument("--target-col")
-    c.add_argument("--note-col", help="optional column kept as rdfs:comment on each link, "
+    c.add_argument("--source-suffix", default="", help="appended to source codes in URIs")
+    c.add_argument("--target-suffix", default="", help="appended to target codes in URIs, e.g. 000080 "
+                                                       "for Cellar's HS items")
+    c.add_argument("--note-col", help="optional column(s), comma-separated, kept as rdfs:comment on each link, "
                                       "e.g. the GSIM type of change")
 
     for p in (s, c):
         p.add_argument("--sheet", help="Excel sheet name (default: first)")
         p.add_argument("--no-header", action="store_true", help="the file has no header row")
+        p.add_argument("--header-row", type=int, help="1-based row holding the column names "
+                                                      "(default: first row mentioning 'code')")
         p.add_argument("--filter-col"); p.add_argument("--filter-value")
         p.add_argument("--fill-down", help="comma-separated columns to fill down")
         p.add_argument("--key-style", choices=["compact", "dotted"], default="compact")

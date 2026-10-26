@@ -27,15 +27,51 @@ from typing import Any
 from urllib.parse import unquote, urlparse
 
 import httpx
-import rdflib
+import pyoxigraph as ox
 
 from .unsd_to_skos import ConversionError, convert, read_table
 
 log = logging.getLogger("classif_mcp.live")
 
-# rdflib's SPARQL parser is not thread-safe: every parse/query of an in-memory
-# graph, in this module and in server.py, holds this lock.
+# Serialises loading into an in-memory store (reads run concurrently).
 RDF_LOCK = threading.Lock()
+
+
+class RdfStore:
+    """In-memory RDF store with SPARQL (Oxigraph): about a third of the memory of a
+    pure-Python graph and much faster loading and querying, which matters on small
+    hosts such as Render's free tier."""
+
+    def __init__(self) -> None:
+        self.store = ox.Store()
+
+    def load_turtle(self, text: str | None = None, path: Path | None = None) -> None:
+        if path is not None:
+            self.store.bulk_load(path=str(path), format=ox.RdfFormat.TURTLE)
+        elif text:
+            self.store.bulk_load(input=text.encode("utf-8"), format=ox.RdfFormat.TURTLE)
+
+    def select(self, query: str) -> list[dict[str, str]]:
+        res = self.store.query(query)
+        names = [v.value for v in res.variables]
+        out = []
+        for sol in res:
+            row = {}
+            for n in names:
+                t = sol[n]
+                if t is not None:
+                    row[n] = t.value
+            out.append(row)
+        return out
+
+    def __len__(self) -> int:
+        return len(self.store)
+
+
+def check_turtle(text: str) -> None:
+    """Raise if the text is not valid Turtle (streaming parse, no store kept)."""
+    for _ in ox.parse(input=text.encode("utf-8"), format=ox.RdfFormat.TURTLE):
+        pass
 
 CM = "http://classif-mcp.local/ns#"  # namespace of classif-mcp's own bookkeeping properties
 UA = {"User-Agent": "classif-mcp/0.2 (statistical classifications MCP server)"}
@@ -107,7 +143,8 @@ class LiveSource:
             f.write_bytes(r.content)
             try:
                 if self.required_columns:
-                    header, _ = read_table(f, self.spec.get("sheet"), self.spec.get("no_header", False))
+                    header, _ = read_table(f, self.spec.get("sheet"), self.spec.get("no_header", False),
+                                           self.spec.get("header_row"))
                     missing = [c for c in self.required_columns if c not in header]
                     if missing:
                         return self._fail(f"new version rejected: columns missing {missing}")
@@ -120,8 +157,7 @@ class LiveSource:
             return self._fail(f"new version rejected: {self.n} -> {n} items (more than "
                               f"{self.max_change:.0%} change; raise max_change if this is expected)")
         try:
-            with RDF_LOCK:
-                rdflib.Graph().parse(data=ttl, format="turtle")
+            check_turtle(ttl)
         except Exception as e:
             return self._fail(f"new version rejected: invalid Turtle ({e})")
         self.ttl, self.n = ttl, n
@@ -157,7 +193,7 @@ class LiveEndpoint:
         cache = Path(cfg.get("cache_dir", ".cache"))
         cache = cache if cache.is_absolute() else config_dir / cache
         self.sources = [LiveSource(s, cache / name, config_dir) for s in cfg.get("sources", [])]
-        self.graph = rdflib.Graph()
+        self.graph = RdfStore()
         self.loaded_at = 0.0
         self.refresh_lock = threading.Lock()
 
@@ -170,18 +206,17 @@ class LiveEndpoint:
             with httpx.Client(timeout=120, follow_redirects=True) as client:
                 changed = [s.refresh(client) for s in self.sources]
             if any(changed) or not self.loaded_at:
-                g = rdflib.Graph()
+                g = RdfStore()
                 with RDF_LOCK:
                     for s in self.sources:
                         if s.ttl:
-                            g.parse(data=s.ttl, format="turtle")
-                self.graph = g
+                            g.load_turtle(s.ttl)
+                self.graph = g  # swapped in whole: queries see the old or the new store, never a mix
             self.loaded_at = time.time()
 
     def query(self, q: str) -> list[dict[str, str]]:
         self.ensure_fresh()
-        with RDF_LOCK:
-            return [{str(k): str(v) for k, v in row.asdict().items()} for row in self.graph.query(q)]
+        return self.graph.select(q)
 
     def status(self) -> list[dict[str, Any]]:
         return [{"url": s.url, "id": s.spec.get("id"), "items": s.n, "status": s.status,
@@ -201,7 +236,7 @@ class SourceWatch:
         self.results: list[dict[str, str]] = []
         self.lock = threading.Lock()
 
-    def check(self, graph: rdflib.Graph) -> None:
+    def check(self, graph: "RdfStore") -> None:
         if self.checked_at and time.time() - self.checked_at < self.refresh_s:
             return
         with self.lock:
@@ -209,8 +244,7 @@ class SourceWatch:
                 return
             q = f"""SELECT ?scheme ?url ?sha WHERE {{ ?scheme <http://purl.org/dc/terms/source> ?url ;
                     <{CM}sourceSha256> ?sha . }}"""
-            with RDF_LOCK:
-                rows = [(str(a), str(b), str(c)) for a, b, c in graph.query(q)]
+            rows = [(r["scheme"], r["url"], r["sha"]) for r in graph.select(q)]
             results = []
             with httpx.Client(timeout=120, follow_redirects=True) as client:
                 for scheme, url, sha in rows:

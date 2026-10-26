@@ -28,7 +28,7 @@ from typing import Any
 import httpx
 from mcp.server.fastmcp import FastMCP
 
-from .live import RDF_LOCK, LiveEndpoint, SourceWatch
+from .live import RDF_LOCK, LiveEndpoint, RdfStore, SourceWatch
 
 PREFIXES = """PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX xkos: <http://rdf-vocabulary.ddialliance.org/xkos#>
@@ -81,16 +81,14 @@ def _local_graph(name: str):
     """Load (once) the Turtle files of a type="local" endpoint into memory."""
     with _LOCAL_INIT:
         if name not in _LOCAL_GRAPHS:
-            import rdflib
-
-            g = rdflib.Graph()
+            g = RdfStore()
             with RDF_LOCK:
                 for f in ENDPOINTS[name].get("files", []):
                     p = Path(f)
                     if not p.is_absolute():
                         p = CONFIG_PATH.parent / p
                     if p.exists():
-                        g.parse(p)
+                        g.load_turtle(path=p)
             _LOCAL_GRAPHS[name] = g
     return _LOCAL_GRAPHS[name]
 
@@ -102,9 +100,7 @@ def _local_query(name: str, query: str) -> list[dict[str, str]]:
             _WATCH[name].check(g)
         except Exception:  # a failed watch must never block answers
             pass
-    # rdflib's SPARQL parser is not thread-safe: serialise in-memory queries.
-    with RDF_LOCK:
-        return [{str(k): str(v) for k, v in row.asdict().items()} for row in g.query(query)]
+    return g.select(query)
 
 
 def _provenance(name: str) -> str:
@@ -484,15 +480,17 @@ async def _fill_target_labels(links: list[dict[str, Any]], lang: str) -> None:
     code, label and scheme of such targets from the endpoint that publishes them."""
     by_ep: dict[str, set[str]] = {}
     for l in links:
-        if not l["target_label"]:
-            ep = _endpoint_for_uri(l["target"])
-            if ep:
-                by_ep.setdefault(ep, set()).add(l["target"])
+        ep = _endpoint_for_uri(l["target"])
+        # look up targets with no label, and every target of a scoped endpoint: an item
+        # can belong to several schemes (a Cellar HS item is also a CN item), and the
+        # scheme reported must be the one in scope
+        if ep and (not l["target_label"] or _scope(ep)):
+            by_ep.setdefault(ep, set()).add(l["target"])
     if not by_ep:
         return
 
     async def lookup(ep: str, uris: set[str]):
-        values = " ".join(_iri(u) for u in list(uris)[:100])
+        values = " ".join(_iri(u) for u in list(uris)[:150])
         q = f"""{PREFIXES}
 SELECT ?t ?code ?label ?ts WHERE {{
   VALUES ?t {{ {values} }}
@@ -505,8 +503,11 @@ SELECT ?t ?code ?label ?ts WHERE {{
         return rows
 
     found: dict[str, dict[str, str]] = {}
+    schemes: dict[str, set[str]] = {}
     for rows in await asyncio.gather(*(lookup(ep, uris) for ep, uris in by_ep.items())):
         for r in rows:
+            if r.get("ts"):
+                schemes.setdefault(r["t"], set()).add(r["ts"])
             if r.get("label") or r.get("code"):
                 found.setdefault(r["t"], r)
     for l in links:
@@ -514,7 +515,15 @@ SELECT ?t ?code ?label ?ts WHERE {{
         if f and not l["target_label"]:
             l["target_label"] = f.get("label", "")
             l["target_code"] = l["target_code"] or f.get("code", "")
-            l["target_scheme"] = l["target_scheme"] or f.get("ts", "")
+        ep = _endpoint_for_uri(l["target"])
+        all_s = schemes.get(l["target"], set())
+        # in configuration order, so that an item in two schemes is reported in the
+        # first listed (HS 2022 before CN 2026 for an HS subheading)
+        allowed = [x for x in _scope(ep) if x in all_s] if ep and _scope(ep) else []
+        if allowed:  # report the in-scope scheme (e.g. hs2022 rather than cn2026 for an HS item)
+            l["target_scheme"] = allowed[0]
+        elif all_s and not l["target_scheme"]:
+            l["target_scheme"] = sorted(all_s)[0]
 
 
 @mcp.tool()
