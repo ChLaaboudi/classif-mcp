@@ -7,11 +7,15 @@ It queries each node at its source and reports, for every link, where that link 
 | Level | Classifications | Source | Tier | Endpoint |
 |---|---|---|---|---|
 | World | ISIC Rev. 4, CPC Ver. 2.1 and 2.0 | Caliper (FAO), SPARQL | 1 | `caliper` |
-| World | ISIC Rev. 5, CPC Ver. 3.0, SITC Rev. 4, and the ISIC Rev. 4 → Rev. 5 table | UNSD files, converted live | 2 | `unsd` |
+| World | ISIC Rev. 5, CPC Ver. 3.0, SITC Rev. 4, and the tables ISIC Rev. 4 → Rev. 5, CPC 2.1 → HS 2017, HS 2022 ↔ HS 2017 and HS 2022 → SITC Rev. 4 | UNSD files, converted live | 2 | `unsd` |
 | World / EU | HS 2022 and HS 2017 (published inside the CN 2026 and CN 2017 graphs) | Cellar, SPARQL | 1 | `cellar` |
 | EU | NACE Rev. 2.1 and Rev. 2, CPA 2.2 and 2.1, PRODCOM 2026, CN 2026 | Cellar (EU Vocabularies), SPARQL | 1 | `cellar` |
 | National (FR) | NAF 2025, NAF rév. 2, CPF rév. 2.1, and the national product lists for production surveys: EAP 2025 (annual survey) and EMB 2026 (monthly branch surveys) | INSEE, SPARQL | 1 | `insee` |
 | National (CH) | NOGA 2025 | FSO code list on I14Y, converted live | 2 | `i14y` |
+
+Every source is read from its publisher, in one of two ways:
+- **queried at question time** (tier 1): Caliper, Cellar and INSEE, through their SPARQL endpoints;
+- **fetched and converted** (tier 2): the UNSD files, and NOGA through the I14Y API's CSV export. Each file is converted to SKOS/XKOS in memory and checked for a new version every 24 hours.
 
 Previous versions are kept where they carry the published links between generations:
 
@@ -233,6 +237,10 @@ Everything below is done in a web browser. Nothing is installed locally.
    - Sign up at render.com with your GitHub account.
    - Click New → Blueprint, select the `classif-mcp` repository and click Apply.
    - Render builds the Dockerfile and gives the service an address such as `https://classif-mcp-xxxx.onrender.com`.
+   - Alternatively, create a Python web service (no Dockerfile), as the live instance does:
+     - Build command: `pip install .`
+     - Start command: `classif-mcp`
+     - Environment variables: `CLASSIF_MCP_TRANSPORT=http`, `HOST=0.0.0.0` and `CLASSIF_MCP_CONFIG=/opt/render/project/src/endpoints.toml`.
 3. **Check that it runs.** Open `https://classif-mcp-xxxx.onrender.com/health`. It should show `{"status":"ok", ...}`.
 4. **Add it to Claude.**
    - Go to Customize › Connectors › + Add › Add custom connector.
@@ -257,12 +265,25 @@ Everything below is done in a web browser. Nothing is installed locally.
 | `match_by_code` | Return a derived, code-based candidate link, in either direction. Upwards it covers NAF 62.10Y → NACE 62.10 and EAP 3092120000 → PRODCOM 30.92.12.00. Downwards it returns national extensions of a code: PRODCOM 30.92.12.00 → EAP 3092120000, NACE 62.10 → NAF 62.10Y. It is marked as derived. |
 | `run_sparql` | Run a read-only SELECT as an escape hatch. |
 
-## Demo prompt
+## Demo prompts
+
+**Activity: computer programming**
 
 "Use only the classif-mcp connector: where is computer programming classified at
 world, EU and national level (France and Switzerland), for the 2025 generation of
 classifications? For each level give the code, label and URI. Say for each link
 whether it is published, converted or derived."
+
+Expected path: NAF 62.10Y and NOGA 621000 → NACE Rev. 2.1 62.10 (derived) → NACE Rev. 2 62.01 → ISIC Rev. 4 6201 → ISIC Rev. 5 6211 / 6219 (breakdown).
+
+**Product: e-bikes**
+
+"Use only the classif-mcp connector: starting from CN 2026 8711 60 10 (electric
+bicycles), follow the links to HS and SITC, then to PRODCOM and its French national
+lists (EAP, EMB) and to NAF. For each step give the code, label and URI, and say
+whether the link is published, converted or derived."
+
+Expected path: CN 2026 8711 60 10 → HS 2022 8711 60 → SITC Rev. 4 78519; CN → PRODCOM 2026 30.92.12.00 → EAP 2025 3092120000 (derived); EMB 2026 3091Z1R0012 → NAF 2025 30.92Y (published).
 
 ## Configuration
 
