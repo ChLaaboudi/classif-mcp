@@ -268,6 +268,29 @@ Everything below is done in a web browser. Nothing is installed locally.
 | `get_correspondences` | Return all links of an item, searched on **every** endpoint and in both directions, each with its provenance. |
 | `match_by_code` | Return a derived, code-based candidate link, in either direction. Upwards it covers NAF 62.10Y → NACE 62.10 and EAP 3092120000 → PRODCOM 30.92.12.00. Downwards it returns national extensions of a code: PRODCOM 30.92.12.00 → EAP 3092120000, NACE 62.10 → NAF 62.10Y. It is marked as derived. |
 | `run_sparql` | Run a read-only SELECT as an escape hatch. |
+| `show_item` | Show one item with the display templates: item card, hierarchy and all its links, each with its provenance. |
+
+`get_concept`, `get_hierarchy`, `get_correspondences` and `match_by_code` also accept `display=true`, which adds a ready-to-show `display` field.
+
+## Display templates (prototype)
+
+`templates.py` lays out answers with fixed templates built on SKOS/XKOS, the same for every classification and publisher. The AI assistant is asked to show them as they are and to add its own comments separately.
+
+| Template | SKOS/XKOS basis | Content |
+|---|---|---|
+| Item card | `skos:Concept`, XKOS notes | classification, code, label, broader item, URI, provenance and publisher, then Scope / Includes / Also includes / Excludes |
+| Hierarchy | `skos:broader` | the path from the top level down to the item |
+| Correspondences | SKOS mapping properties, `xkos:ConceptAssociation` | one row per link: link type (with the type of change where published), classification, code, label, provenance, publisher |
+| Derived match | (none: code pattern) | the candidate, marked as derived and not official |
+
+Rules built into the templates:
+- provenance is a fixed field: published, converted or derived, with the publisher;
+- the content is only laid out, never reworded: labels and notes are shown as published;
+- a code repeated at the start of a label (as in Cellar's NACE labels) is shown once;
+- a note available only in another language is shown in that language and flagged as such;
+- a scheme label ending with an acronym in brackets is shortened to it ("NACE Rev. 2.1").
+
+Example prompt: "Use classif-mcp's show_item for NACE Rev. 2.1 62.10 and show the result as is."
 
 ## Demo prompts
 

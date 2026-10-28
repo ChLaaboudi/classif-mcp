@@ -123,6 +123,8 @@ MAX_ROWS = int(os.environ.get("CLASSIF_MCP_MAX_ROWS", "200"))
 
 mcp = FastMCP("classif-mcp")
 
+from . import templates as T  # noqa: E402  display templates (SKOS/XKOS)
+
 # --------------------------------------------------------------------------- helpers
 
 
@@ -338,10 +340,16 @@ SELECT DISTINCT ?c ?code ?label ?scheme WHERE {{
 
 
 @mcp.tool()
-async def get_concept(uri: str, endpoint: str | None = None, lang: str = "en") -> dict[str, Any]:
+async def get_concept(uri: str, endpoint: str | None = None, lang: str = "en",
+                      display: bool = False) -> dict[str, Any]:
     """Describe one classification item: code, labels, scheme, level, parent,
     children count, explanatory notes (XKOS core/additional content, inclusions,
-    exclusions) and any other literal properties in the requested language."""
+    exclusions) and any other literal properties in the requested language.
+
+    display: true adds "display", the answer laid out with the standard SKOS/XKOS
+    template (Markdown, provenance included). Show it to the user as is, without
+    rewording it; add any comment of your own separately.
+    """
     endpoint = endpoint or _endpoint_for_uri(uri)
     if not endpoint:
         raise ValueError(f"No configured endpoint publishes {uri}; pass endpoint=...")
@@ -368,20 +376,33 @@ SELECT ?p ?text (LANG(?text) AS ?lang) ?nlang WHERE {{
     for r in nrows[0]:
         nl = (r.get("lang") or str(r.get("nlang", "")).rsplit("/", 1)[-1]).lower()
         notes.setdefault(re.split(r"[#/]", r["p"])[-1], []).append({"lang": nl, "text": r["text"]})
+    # some publishers (Cellar's NACE Rev. 2.1) give the note text directly as a literal
+    for key in ("scopeNote", "coreContentNote", "additionalContentNote", "inclusionNote",
+                "exclusionNote", "caseLaw"):
+        for text in props.get(key, []):
+            if not text.startswith(("http://", "https://")):
+                notes.setdefault(key, []).append({"lang": lang.lower(), "text": text})
     if notes:  # requested language first; other languages only when it has none
         out["explanatory_notes"] = {
             k: ([n for n in v if n["lang"].startswith(lang.lower())] or v) for k, v in notes.items()}
+    if display:
+        out["display"] = await _card(uri, endpoint, lang, out)
     return out
 
 
 @mcp.tool()
 async def get_hierarchy(
-    uri: str, direction: str = "up", endpoint: str | None = None, lang: str = "en"
+    uri: str, direction: str = "up", endpoint: str | None = None, lang: str = "en",
+    display: bool = False,
 ) -> dict[str, Any]:
     """Walk the hierarchy of a classification item.
 
     direction: "up" returns all ancestors (section, division, group, ...);
                "down" returns the direct children.
+
+    display: true adds "display", the answer laid out with the standard SKOS/XKOS
+    template (Markdown, provenance included). Show it to the user as is, without
+    rewording it; add any comment of your own separately.
     """
     endpoint = endpoint or _endpoint_for_uri(uri)
     if not endpoint:
@@ -412,15 +433,21 @@ SELECT DISTINCT ?x ?code ?label ?d WHERE {{
                 seen.add(r["x"])
                 uniq.append(r)
         rows = uniq
-    return {
+    out = {
         "endpoint": endpoint, "uri": uri, "direction": direction,
         "items": [{"uri": r["x"], "code": r.get("code", ""), "label": r.get("label", "")} for r in rows],
     }
+    if display:
+        core = await _core(uri, endpoint, lang)
+        slabel = (await _scheme_labels([core["scheme"]], lang)).get(core["scheme"], "") if core["scheme"] else ""
+        out["display"] = (T.hierarchy(slabel, out["items"], core) if direction == "up"
+                          else T.children(slabel, core, out["items"]))
+    return out
 
 
 @mcp.tool()
 async def get_correspondences(
-    uri: str, target_scheme: str | None = None, lang: str = "en"
+    uri: str, target_scheme: str | None = None, lang: str = "en", display: bool = False,
 ) -> dict[str, Any]:
     """Return the PUBLISHED links of a classification item, searched on every
     configured endpoint (a link NACE->ISIC may be stored at either end).
@@ -431,6 +458,10 @@ async def get_correspondences(
     that states it, so provenance is traceable.
 
     target_scheme: optional scheme URI to keep only links into that scheme.
+
+    display: true adds "display", the answer laid out with the standard SKOS/XKOS
+    template (Markdown, provenance included). Show it to the user as is, without
+    rewording it; add any comment of your own separately.
     """
     i = _iri(uri)
     values = " ".join(f"skos:{p}" for p in MATCH_PROPS)
@@ -483,6 +514,8 @@ SELECT DISTINCT ?rel ?dir ?t ?ts ?code ?label ?note WHERE {{
     out["links"] = [l for l in out["links"] if _in_scope(l["target"], l["target_scheme"])]
     if before > len(out["links"]):
         out["out_of_scope_links_hidden"] = before - len(out["links"])
+    if display:
+        out["display"] = await _links_display(uri, out, lang)
     return out
 
 
@@ -540,7 +573,8 @@ SELECT ?t ?code ?label ?ts WHERE {{
 
 @mcp.tool()
 async def match_by_code(
-    code: str, target_scheme: str, endpoint: str | None = None, lang: str = "en"
+    code: str, target_scheme: str, endpoint: str | None = None, lang: str = "en",
+    display: bool = False,
 ) -> dict[str, Any]:
     """DERIVE a candidate link by code, in either direction:
 
@@ -553,6 +587,10 @@ async def match_by_code(
     Use it only where the national classification is built on the European one by
     extending its codes, and only when no published link exists. Results are marked
     provenance="derived" and must not be presented as official correspondences.
+
+    display: true adds "display", the answer laid out with the standard SKOS/XKOS
+    template (Markdown, provenance included). Show it to the user as is, without
+    rewording it; add any comment of your own separately.
     """
     _check_scope(target_scheme)
     endpoint = endpoint or _endpoint_for_uri(target_scheme)
@@ -607,7 +645,112 @@ SELECT DISTINCT ?c ?code ?label WHERE {{
             r = down[0]
             out["match"] = {"uri": r["c"], "code": r.get("code", ""), "label": r.get("label", ""),
                             "matched_on": norm, "direction": "down"}
+    if display:
+        slabel = (await _scheme_labels([target_scheme], lang)).get(target_scheme, "")
+        out["display"] = T.derived_match(code, slabel, out["match"], out.get("extensions"))
     return out
+
+
+@mcp.tool()
+async def show_item(uri: str, lang: str = "en") -> dict[str, Any]:
+    """Show one classification item with the standard SKOS/XKOS templates: item card
+    (code, label, broader item, URI, provenance, explanatory notes), its hierarchy and
+    all its published links, each with its provenance.
+
+    Returns "display" (Markdown). Show it to the user as is, without rewording it;
+    add any comment of your own separately."""
+    endpoint = _endpoint_for_uri(uri)
+    if not endpoint:
+        raise ValueError(f"No configured endpoint publishes {uri}")
+    concept, hier, links = await asyncio.gather(
+        get_concept(uri, endpoint, lang, display=True),
+        get_hierarchy(uri, "up", endpoint, lang, display=True),
+        get_correspondences(uri, None, lang, display=True))
+    return {"uri": uri, "display": "\n\n---\n\n".join(
+        [concept["display"], hier["display"], links["display"]])}
+
+
+# --------------------------------------------------------------------------- display helpers
+
+_SCHEME_LABEL_CACHE: dict[tuple[str, str], str] = {}
+
+
+async def _scheme_labels(uris: list[str], lang: str) -> dict[str, str]:
+    """Scheme URI -> its label, from the endpoint that publishes it (cached)."""
+    out, todo = {}, {}
+    for u in {u for u in uris if u}:
+        if (u, lang) in _SCHEME_LABEL_CACHE:
+            out[u] = _SCHEME_LABEL_CACHE[(u, lang)]
+        elif (ep := _endpoint_for_uri(u)):
+            todo.setdefault(ep, []).append(u)
+
+    async def lookup(ep: str, us: list[str]):
+        q = f"""{PREFIXES}
+SELECT ?s ?l (LANG(?l) AS ?lang) WHERE {{ VALUES ?s {{ {" ".join(_iri(u) for u in us)} }}
+  ?s skos:prefLabel ?l . }}"""
+        rows, _ = await _sparql_safe(ep, q)
+        return rows
+
+    for rows in await asyncio.gather(*(lookup(ep, us) for ep, us in todo.items())):
+        rows.sort(key=lambda r: (0 if (r.get("lang") or "").lower().startswith(lang.lower())
+                                 else 1 if not r.get("lang") else 2))
+        for r in rows:
+            # "Statistical Classification of ... Rev. 2.1 (NACE Rev. 2.1)" -> "NACE Rev. 2.1"
+            m = re.search(r"\(([^()]{2,30})\)\s*$", r["l"])
+            out.setdefault(r["s"], m.group(1) if m else r["l"])
+    for u in [u for us in todo.values() for u in us]:
+        _SCHEME_LABEL_CACHE[(u, lang)] = out.get(u, "")
+        out.setdefault(u, "")
+    return out
+
+
+async def _core(uri: str, endpoint: str, lang: str) -> dict[str, Any]:
+    """Code, label, in-scope scheme and broader item of one item."""
+    def item_q(v: str) -> str:
+        return f"""{PREFIXES}
+SELECT ?x ?code ?label ?s WHERE {{
+  {v}
+  OPTIONAL {{ ?x skos:prefLabel ?label .
+             FILTER(LANGMATCHES(LANG(?label), "{_lit(lang)}") || LANG(?label) = "") }}
+  OPTIONAL {{ ?x skos:inScheme ?s }}
+  {CODE_PATTERN.format(v="?x", out="?code")}
+}} LIMIT 20"""
+    (rows, _), (brows, _) = await asyncio.gather(
+        _sparql_safe(endpoint, item_q(f"BIND({_iri(uri)} AS ?x)")),
+        _sparql_safe(endpoint, item_q(f"{_iri(uri)} skos:broader ?x . FILTER(?x != {_iri(uri)})")))
+    schemes = [r["s"] for r in rows if r.get("s")]
+    in_scope = [x for x in _scope(endpoint) if x in schemes]
+    scheme = in_scope[0] if in_scope else (sorted(schemes)[0] if schemes else "")
+    first = rows[0] if rows else {}
+    b = brows[0] if brows else None
+    return {"uri": uri, "code": first.get("code", ""), "label": first.get("label", ""), "scheme": scheme,
+            "broader": {"code": b.get("code", ""), "label": b.get("label", "")} if b else None}
+
+
+async def _card(uri: str, endpoint: str, lang: str, concept: dict[str, Any]) -> str:
+    core = await _core(uri, endpoint, lang)
+    labels = await _scheme_labels([core["scheme"]], lang)
+    qs = f"""{PREFIXES}
+SELECT DISTINCT ?src WHERE {{ {_iri(uri)} ?p ?n . ?n xkos:plainText ?t ; dct:source ?src }} LIMIT 5"""
+    srcs, _ = await _sparql_safe(endpoint, qs)
+    notes = {k: [(n["text"], n.get("lang", "")) for n in v]
+             for k, v in (concept.get("explanatory_notes") or {}).items()}
+    return T.item_card({
+        **core, "scheme_label": labels.get(core["scheme"], ""), "notes": notes, "lang": lang,
+        "provenance": _provenance(endpoint),
+        "publisher": ENDPOINTS[endpoint].get("publisher", endpoint),
+        "note_source": ", ".join(r["src"] for r in srcs) if srcs else ""})
+
+
+async def _links_display(uri: str, out: dict[str, Any], lang: str) -> str:
+    endpoint = _endpoint_for_uri(uri)
+    core = await _core(uri, endpoint, lang) if endpoint else {"code": "", "label": uri, "scheme": ""}
+    labels = await _scheme_labels([l["target_scheme"] for l in out["links"]] + [core["scheme"]], lang)
+    rows = [{**l, "target_scheme_label": labels.get(l["target_scheme"], "") or l["target_scheme"],
+             "publisher": ENDPOINTS[l["stated_at"]].get("publisher", l["stated_at"])} for l in out["links"]]
+    title = " · ".join(x for x in (labels.get(core["scheme"], ""),
+                                   T._code_label(core["code"], core["label"])) if x)
+    return T.correspondences(title or uri, rows, out.get("out_of_scope_links_hidden", 0))
 
 
 @mcp.tool()
