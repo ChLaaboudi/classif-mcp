@@ -9,7 +9,7 @@ It queries each node at its source and reports, for every link, where that link 
 | Level | Classifications | Source | Tier | Endpoint |
 |---|---|---|---|---|
 | World | ISIC Rev. 4, CPC Ver. 2.1 and 2.0 | Caliper (FAO), SPARQL | 1 | `caliper` |
-| World | ISIC Rev. 5, CPC Ver. 3.0, SITC Rev. 4, and the tables ISIC Rev. 4 → Rev. 5, CPC 2.1 → HS 2017, HS 2022 ↔ HS 2017 and HS 2022 → SITC Rev. 4 | UNSD files, converted live | 2 | `unsd` |
+| World | ISIC Rev. 5 (with its explanatory notes), CPC Ver. 3.0, SITC Rev. 4, and the tables ISIC Rev. 4 → Rev. 5, CPC 2.1 → HS 2017, HS 2022 ↔ HS 2017 and HS 2022 → SITC Rev. 4 | UNSD files, converted live | 2 | `unsd` |
 | World / EU | HS 2022 and HS 2017 (published inside the CN 2026 and CN 2017 graphs) | Cellar, SPARQL | 1 | `cellar` |
 | EU | NACE Rev. 2.1 and Rev. 2, CPA 2.2 and 2.1, PRODCOM 2026, CN 2026 | Cellar (EU Vocabularies), SPARQL | 1 | `cellar` |
 | National (FR) | NAF 2025, NAF rév. 2, CPF rév. 2.1, and the national product lists for production surveys: EAP 2025 (annual survey) and EMB 2026 (monthly branch surveys) | INSEE, SPARQL | 1 | `insee` |
@@ -105,7 +105,7 @@ fallback = "data/isic-rev5.ttl"
 ```
 
 Each source accepts the same options as the `classif-unsd` command, written as TOML keys rather than `--options`:
-- `mode`, which is `scheme` or `correspondence`;
+- `mode`, which is `scheme`, `correspondence` or `notes` (explanatory notes only, attached to a scheme converted from another file: `scheme_id` names that scheme, `strip_section = true` turns codes such as A0111 into 0111);
 - `code_col`, `label_col` and `parent_col`;
 - `source_col`, `target_col` and `note_col`;
 - `source_base` and `target_base`;
@@ -333,6 +333,7 @@ Endpoints are declared in `endpoints.toml`:
 
 **UNSD files**, converted live:
 - ISIC Rev. 5: 830 items, with a complete hierarchy.
+- ISIC Rev. 5 explanatory notes: from `ISIC5_Exp_Notes_19_Aug_2026.xlsx`, attached to the same 830 items (`mode = "notes"`). Includes → `xkos:coreContentNote`, Includes also → `xkos:additionalContentNote`, Excludes → `xkos:exclusionNote`, Introductory text → `skos:scopeNote`. Each note carries its own `dct:source`. The file's Notes sheet says the notes were endorsed with ISIC Rev. 5 in 2024 and updated on 19 August 2026 (scope clarifications, typographical corrections; pre-edited publication). Example: class 3092 now names electric assisted bicycles in its "also includes" note.
 - CPC Ver. 3.0: 4,586 items.
 - SITC Rev. 4: 4,011 items, from `SITCCodeandDescription.xlsx`, sheet SITC4, with an explicit Parent Code column.
 - ISIC Rev. 4→5: 605 links, each carrying the GSIM type of change. Its Rev. 4 side points to Caliper's ISIC Rev. 4 URIs, so the chain connects.

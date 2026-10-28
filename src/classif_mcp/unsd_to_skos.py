@@ -205,13 +205,17 @@ def lit(s: str) -> str:
 
 def lit_text(s: str) -> str:
     """Literal keeping line breaks (explanatory notes often hold lists)."""
+    # "_x000D_" is how Excel escapes a carriage return inside a cell
+    s = s.replace("_x000D_\n", "\n").replace("_x000D_", "\n")
     s = s.replace("\r\n", "\n").replace("\r", "\n").strip()
     return '"' + s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n") + '"'
 
 
 # column-name -> XKOS explanatory note type, for --notes "intro=core,includes=inclusion,..."
-NOTE_TYPES = {"core": "coreContentNote", "additional": "additionalContentNote",
-              "inclusion": "inclusionNote", "exclusion": "exclusionNote"}
+NOTE_TYPES = {"core": "xkos:coreContentNote", "additional": "xkos:additionalContentNote",
+              "inclusion": "xkos:inclusionNote", "exclusion": "xkos:exclusionNote",
+              # general or introductory text that is neither an inclusion nor an exclusion
+              "intro": "skos:scopeNote", "scope": "skos:scopeNote"}
 
 
 def _pairs(spec):
@@ -312,12 +316,48 @@ def build_scheme(rows, code_i, label_i, base, sid, label, lang, source_url,
             triples.append(f"    skos:prefLabel {lit(ltext)}@{llang}")
         note_blocks = []
         for prop, nlang, text in xnotes:  # XKOS explanatory notes, modelled as INSEE and Eurostat do
-            nuri = f"<{base}{sid}/{k}/note/{prop}" + (f"/{nlang}>" if nlang != lang else ">")
-            triples.append(f"    xkos:{prop} {nuri}")
+            nuri = f"<{base}{sid}/{k}/note/{prop.split(':')[1]}" + (f"/{nlang}>" if nlang != lang else ">")
+            triples.append(f"    {prop} {nuri}")
             note_blocks.append(f"{nuri} a xkos:ExplanatoryNote ;\n    xkos:plainText {lit_text(text)}@{nlang} .\n")
         out.append(" ;\n".join(triples) + " .\n")
         out.extend(note_blocks)
         n += 1
+    return "\n".join(out), n
+
+
+def build_notes(rows, code_i, notes, base, scheme_id, lang, source_url,
+                key_style: str = "compact", strip_section: bool = False,
+                prov_note: str | None = None) -> tuple[str, int]:
+    """Explanatory notes only, attached to the items of a scheme converted from another
+    file (same URIs: base + scheme_id + code). Each note records its own source, so the
+    structure and the notes can come from different files and dates.
+    strip_section: "A0111" -> "0111" (files that prefix codes with their section letter)."""
+    out = [TTL_PREFIXES]
+    note_lit = lit(prov_note) if prov_note else None
+    n = 0
+    for r in rows:
+        if len(r) <= code_i or not r[code_i].strip():
+            continue
+        code = r[code_i].strip()
+        if strip_section:
+            code = re.sub(r"^[A-Z](?=\d)", "", code)
+        k = code_key(code, key_style)
+        uri = f"<{base}{scheme_id}/{k}>"
+        written = False
+        for ci, prop, nlang in notes:
+            text = r[ci].strip() if len(r) > ci else ""
+            if not text or text.lower() in ("none", "na"):
+                continue
+            nuri = f"<{base}{scheme_id}/{k}/note/{prop.split(':')[1]}" + (f"/{nlang}>" if nlang != lang else ">")
+            block = (f"{uri} {prop} {nuri} .\n{nuri} a xkos:ExplanatoryNote ;\n"
+                     f"    xkos:plainText {lit_text(text)}@{nlang}")
+            if source_url:
+                block += f" ;\n    dct:source <{source_url}>"
+            if note_lit:
+                block += f" ;\n    skos:editorialNote {note_lit}@en"
+            out.append(block + " .\n")
+            written = True
+        n += written
     return "\n".join(out), n
 
 
@@ -363,7 +403,8 @@ def convert(path: Path, mode: str = "scheme", *, id: str, label: str, lang: str 
             filter_col=None, filter_value=None, fill_down=None, key_style: str = "compact",
             source_url: str | None = None, prov_note: str | None = None,
             notes=None, skip_codes=None, labels=None, header_row: int | None = None,
-            source_suffix: str = "", target_suffix: str = "") -> tuple[str, int, str]:
+            source_suffix: str = "", target_suffix: str = "",
+            scheme_id: str | None = None, strip_section: bool = False) -> tuple[str, int, str]:
     """Convert one file to Turtle. Returns (turtle, number of items or links, description).
     Used by the classif-unsd command and by live "file" endpoints in the server."""
     try:
@@ -394,6 +435,15 @@ def convert(path: Path, mode: str = "scheme", *, id: str, label: str, lang: str 
                              f"({', '.join(missing[:10])}); they are kept at the top level, as published.")
             ttl, n = build_scheme(rows, ci, li, base.rstrip("/") + "/", id, label, lang, source_url,
                                   pi, key_style, prov_note, notes=note_cols, labels=label_cols)
+        elif mode == "notes":  # explanatory notes for a scheme converted from another file
+            ci = pick(header, code_col, [r"code"])
+            note_cols = parse_notes(notes, header, lang)
+            if not note_cols:
+                raise ConversionError("mode 'notes' needs a notes specification")
+            info = (f"header={header}\ncode={header[ci]!r} scheme={scheme_id or id!r} "
+                    f"notes={[(header[c], p, l) for c, p, l in note_cols]} rows={len(rows)}")
+            ttl, n = build_notes(rows, ci, note_cols, base.rstrip("/") + "/", scheme_id or id, lang,
+                                 source_url, key_style, strip_section, prov_note)
         elif mode == "correspondence":
             if not (source_base and target_base):
                 raise ConversionError("source_base and target_base are required for a correspondence")

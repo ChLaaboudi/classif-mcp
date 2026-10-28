@@ -62,6 +62,26 @@ required_columns = ["ISIC Rev 5 Code", "ISIC Rev 5 Title"]
 min_items = 800
 fallback = "data/isic-rev5.ttl"
 
+# Explanatory notes of ISIC Rev. 5, from a separate UNSD file, attached to the items above.
+# The file prefixes codes with their section letter (A0111): strip_section removes it.
+# Its "Notes" sheet says the notes were endorsed with ISIC Rev. 5 (UN Statistical Commission,
+# 55th session, 2024) and updated on 19 August 2026 to clarify scope boundaries and correct
+# typographical errors; the publication is a pre-edited version.
+[[endpoints.unsd.sources]]
+url = "https://unstats.un.org/unsd/classifications/Econ/Download/ISIC5_Exp_Notes_19_Aug_2026.xlsx"
+id = "isic-rev5-notes"
+label = "ISIC Rev. 5 explanatory notes (UNSD, updated 19 August 2026)"
+mode = "notes"
+scheme_id = "isic-rev5"
+sheet = "ISIC5"
+code_col = "ISIC Rev 5 Code (with Section)"
+strip_section = true
+notes = { "ISIC Rev 5 Introductory Text" = "intro", "ISIC Rev 5 Includes" = "core", "ISIC Rev 5 Includes Also" = "additional", "ISIC Rev 5 Excludes" = "exclusion" }
+required_columns = ["ISIC Rev 5 Code (with Section)", "ISIC Rev 5 Includes", "ISIC Rev 5 Excludes"]
+min_items = 800
+prov_note = "Explanatory notes as updated by UNSD on 19 August 2026 (pre-edited version of the ISIC Rev. 5 publication). Converted by classif-mcp; check against the source file."
+fallback = "data/isic-rev5-notes.ttl"
+
 [[endpoints.unsd.sources]]
 url = "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/CPC_Ver_3.0_Structure_30Jun2025.csv"
 id = "cpc-v3"
