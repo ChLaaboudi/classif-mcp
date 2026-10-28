@@ -775,33 +775,6 @@ async def health(request):  # liveness probe for hosting platforms
     return JSONResponse({"status": "ok", "endpoints": list(ENDPOINTS)})
 
 
-def _probe_friendly(app):
-    """Answer HEAD and OPTIONS on the MCP path instead of 405 Method Not Allowed.
-
-    Some clients probe the connector address with HEAD or OPTIONS before connecting;
-    a 405 there can be read as "this server requires sign-in". The server needs no
-    sign-in, so these probes get a plain success. Everything else goes to MCP unchanged."""
-    path = mcp.settings.streamable_http_path.rstrip("/")
-
-    async def wrapped(scope, receive, send):
-        if (scope["type"] == "http" and scope["method"] in ("HEAD", "OPTIONS")
-                and scope["path"].rstrip("/") == path):
-            headers = [(b"allow", b"GET, POST, DELETE, HEAD, OPTIONS"),
-                       (b"access-control-allow-origin", b"*"),
-                       (b"access-control-allow-methods", b"GET, POST, DELETE, HEAD, OPTIONS"),
-                       (b"access-control-allow-headers",
-                        b"content-type, accept, mcp-session-id, mcp-protocol-version, authorization"),
-                       (b"access-control-expose-headers", b"mcp-session-id"),
-                       (b"content-length", b"0")]
-            status = 200 if scope["method"] == "HEAD" else 204
-            await send({"type": "http.response.start", "status": status, "headers": headers})
-            await send({"type": "http.response.body", "body": b""})
-            return
-        await app(scope, receive, send)
-
-    return wrapped
-
-
 def main() -> None:
     transport = os.environ.get("CLASSIF_MCP_TRANSPORT", "stdio")
     if transport == "http":
@@ -825,10 +798,7 @@ def main() -> None:
             mcp.settings.transport_security = TransportSecuritySettings(
                 enable_dns_rebinding_protection=False
             )
-        import uvicorn
-
-        uvicorn.run(_probe_friendly(mcp.streamable_http_app()), host=mcp.settings.host,
-                    port=mcp.settings.port, log_level=mcp.settings.log_level.lower())
+        mcp.run(transport="streamable-http")
     else:
         mcp.run()
 
