@@ -4,6 +4,8 @@ An MCP server that links the integrated system of economic classifications acros
 
 It queries each node at its source and reports, for every link, where that link is stated. It is restricted to the classifications in Figure 1: searches, scheme lists and links outside them are not returned.
 
+**Live connector:** `https://classif-mcp.onrender.com/mcp` (add it as a custom connector, with no sign-in). To wake the server before use, open `https://classif-mcp.onrender.com/health`.
+
 | Level | Classifications | Source | Tier | Endpoint |
 |---|---|---|---|---|
 | World | ISIC Rev. 4, CPC Ver. 2.1 and 2.0 | Caliper (FAO), SPARQL | 1 | `caliper` |
@@ -52,11 +54,13 @@ Each endpoint's `schemes` list in `endpoints.toml` defines the scope.
 
 How a classification is brought in depends on how its publisher releases it:
 
-| Tier | Published as | How classif-mcp uses it | Provenance shown |
-|------|--------------|-------------------------|------------------|
-| 1 | RDF (SKOS/XKOS) with a SPARQL endpoint | Queried live; the publisher's URIs | **published** |
-| 2 | CSV, TXT, Excel (.xlsx/.xls) or JSON | Fetched from the publisher and converted in memory, rechecked every `refresh_hours` (`type = "file"`); or converted once with `classif-unsd` (`type = "local"`) | **converted** |
-| 3 | PDF only | Transcribed once with `classif-pdf`. Two independent readings are compared, and a person checks only the rows where they differ or a check fails. The PDF is watched for new versions. No Figure 1 classification needs this tier. | **extracted** |
+| Tier | Published as | 5-star open data | How classif-mcp uses it | Provenance shown |
+|------|--------------|------------------|-------------------------|------------------|
+| 1 | RDF (SKOS/XKOS) with a SPARQL endpoint | 4–5 ★ | Queried live; the publisher's URIs | **published** |
+| 2 | CSV, TXT, Excel (.xlsx/.xls) or JSON | 2–3 ★ | Fetched from the publisher and converted in memory, rechecked every `refresh_hours` (`type = "file"`); or converted once with `classif-unsd` (`type = "local"`) | **converted** |
+| 3 | PDF only | 1 ★ | Transcribed once with `classif-pdf`. Two independent readings are compared, and a person checks only the rows where they differ or a check fails. The PDF is watched for new versions. No Figure 1 classification needs this tier. | **extracted** |
+
+The tier says how directly a machine can use a classification as published (1 = most direct). The star column refers to Tim Berners-Lee's 5-star scheme for open data: structured data (2 ★), open format (3 ★), URIs (4 ★), linked to other data (5 ★).
 
 Two rules apply:
 
