@@ -20,7 +20,6 @@
 # ---------------------------------------------------------------- world, tier 1
 
 [endpoints.caliper]
-publisher = "Caliper (FAO)"
 label = "Caliper (FAO) - ISIC Rev. 4, CPC Ver. 2.1 and 2.0"
 level = "world"
 url = "https://caliper.integratedmodelling.org/caliper/sparql"
@@ -47,7 +46,6 @@ schemes = [
 #   HS 2022 - SITC Rev. 4   below; sources Cellar's HS 2022 items
 # A Cellar HS item is the CN item of the same code: {code} + "000080" under the CN graph.
 [endpoints.unsd]
-publisher = "UNSD"
 type = "file"
 label = "UNSD files, converted live (ISIC Rev. 5, CPC Ver. 3.0, SITC Rev. 4, and correspondence tables)"
 level = "world"
@@ -174,7 +172,6 @@ fallback = "data/hs2022-sitc4.ttl"
 # ---------------------------------------------------------------- EU, tier 1
 
 [endpoints.cellar]
-publisher = "Cellar (Publications Office of the EU)"
 label = "Cellar (EU Vocabularies) - NACE, CPA, PRODCOM, CN and HS"
 level = "eu"
 url = "https://publications.europa.eu/webapi/rdf/sparql"
@@ -201,7 +198,6 @@ schemes = [
 # so EAP <-> PRODCOM is derived (match_by_code). EMB items carry published links
 # (skos:relatedMatch) to NAF 2025.
 [endpoints.insee]
-publisher = "INSEE"
 label = "INSEE - NAF 2025, NAF rev. 2, CPF rev. 2.1, EAP 2025 and EMB 2026 (France)"
 level = "national"
 country = "FR"
@@ -225,7 +221,6 @@ schemes = [
 # The URL names one version of the code list (nogaCode 2.0.1, valid from 2026-03-06);
 # when the FSO publishes a new version on I14Y, replace the concept id below.
 [endpoints.i14y]
-publisher = "FSO, I14Y"
 type = "file"
 label = "I14Y (FSO) - NOGA 2025, converted live (Switzerland)"
 level = "national"
