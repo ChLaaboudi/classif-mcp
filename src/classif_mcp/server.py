@@ -30,6 +30,8 @@ from mcp.server.fastmcp import FastMCP
 
 from .live import RDF_LOCK, LiveEndpoint, RdfStore, SourceWatch
 
+SKOSXL = "http://www.w3.org/2008/05/skos-xl#"
+
 PREFIXES = """PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX xkos: <http://rdf-vocabulary.ddialliance.org/xkos#>
 PREFIX dc: <http://purl.org/dc/elements/1.1/>
@@ -216,6 +218,17 @@ async def _sparql_safe(endpoint: str, query: str) -> tuple[list[dict[str, str]],
         return [], f"{type(e).__name__}: {e}"
 
 
+DEFAULT_LANG = "en"
+
+
+def _lang(endpoint: str | None, lang: str | None) -> str:
+    """Label language: the one asked for, else the endpoint's default_lang
+    (French for INSEE), else English."""
+    if lang:
+        return lang
+    return (ENDPOINTS.get(endpoint or "", {}).get("default_lang") or DEFAULT_LANG)
+
+
 def _targets(endpoint: str | None) -> list[str]:
     if endpoint:
         _check_endpoint(endpoint)
@@ -253,12 +266,14 @@ async def list_endpoints() -> list[dict[str, Any]]:
 
 @mcp.tool()
 async def list_schemes(
-    endpoint: str | None = None, text: str | None = None, lang: str = "en", limit: int = 100
+    endpoint: str | None = None, text: str | None = None, lang: str | None = None, limit: int = 100
 ) -> dict[str, Any]:
     """List classification schemes (skos:ConceptScheme) on one or all endpoints.
 
     text: optional case-insensitive filter on the scheme label or URI (e.g. "ISIC", "NAF").
-    lang: preferred label language; labels without a language tag are also accepted.
+    lang: label language (e.g. "en", "fr", "de"). Default: English, except INSEE's
+          classifications, which are returned in French. Labels without a language
+          tag are also accepted.
     """
     flt = ""
     if text:
@@ -266,12 +281,13 @@ async def list_schemes(
         flt = f'FILTER(CONTAINS(LCASE(STR(?label)), "{t}") || CONTAINS(LCASE(STR(?scheme)), "{t}"))'
 
     def q(name: str) -> str:
+        L = _lang(name, lang)
         return f"""{PREFIXES}
 SELECT DISTINCT ?scheme ?label WHERE {{
   {_scope_values(name, "?scheme")}
   ?scheme a skos:ConceptScheme .
   OPTIONAL {{ ?scheme skos:prefLabel ?label .
-             FILTER(LANGMATCHES(LANG(?label), "{_lit(lang)}") || LANG(?label) = "") }}
+             FILTER(LANGMATCHES(LANG(?label), "{_lit(L)}") || LANG(?label) = "") }}
   {flt}
 }} ORDER BY ?scheme LIMIT {min(limit, MAX_ROWS)}"""
     out: dict[str, Any] = {"schemes": [], "errors": {}}
@@ -290,15 +306,19 @@ async def find_concepts(
     text: str,
     scheme: str | None = None,
     endpoint: str | None = None,
-    lang: str = "en",
+    lang: str | None = None,
     limit: int = 25,
 ) -> dict[str, Any]:
     """Find classification items by label words or by code.
 
     text: words from the label ("computer programming") or a code ("62.10", "6210", "62.10Z").
+          Words are matched in the labels of every language; the label returned is in `lang`.
     scheme: restrict to one scheme URI (strongly recommended on large endpoints).
     endpoint: restrict to one endpoint; by default all endpoints are searched
               (or the one that publishes `scheme`).
+    lang: label language (e.g. "en", "fr", "de"). Default: English, except INSEE's
+          classifications, which are returned in French. Labels without a language
+          tag are also accepted.
     """
     t = _lit(text.strip().lower())
     code = _lit(_norm_code(text))
@@ -314,13 +334,15 @@ async def find_concepts(
         scheme_clause = (f"BIND({_iri(scheme)} AS ?scheme) ?c skos:inScheme ?scheme ." if scheme else
                          f"{_scope_values(name, '?scheme')} ?c skos:inScheme ?scheme ." if _scope(name) else
                          "OPTIONAL { ?c skos:inScheme ?scheme }")
+        L = _lang(name, lang)
         return f"""{PREFIXES}
 SELECT DISTINCT ?c ?code ?label ?scheme WHERE {{
   {scheme_clause}
-  ?c skos:prefLabel ?label .
-  FILTER(LANGMATCHES(LANG(?label), "{_lit(lang)}") || LANG(?label) = "")
+  ?c skos:prefLabel ?ml .
   {CODE_PATTERN.format(v="?c", out="?code")}
-  FILTER(CONTAINS(LCASE(STR(?label)), "{t}") {code_filter})
+  FILTER(CONTAINS(LCASE(STR(?ml)), "{t}") {code_filter})
+  OPTIONAL {{ ?c skos:prefLabel ?label .
+             FILTER(LANGMATCHES(LANG(?label), "{_lit(L)}") || LANG(?label) = "") }}
 }} LIMIT {min(limit, MAX_ROWS)}"""
     out: dict[str, Any] = {"concepts": [], "errors": {}}
     names = _targets(endpoint)
@@ -338,13 +360,20 @@ SELECT DISTINCT ?c ?code ?label ?scheme WHERE {{
 
 
 @mcp.tool()
-async def get_concept(uri: str, endpoint: str | None = None, lang: str = "en") -> dict[str, Any]:
+async def get_concept(uri: str, endpoint: str | None = None, lang: str | None = None) -> dict[str, Any]:
     """Describe one classification item: code, labels, scheme, level, parent,
     children count, explanatory notes (XKOS core/additional content, inclusions,
-    exclusions) and any other literal properties in the requested language."""
+    exclusions) and any other literal properties in the requested language.
+    SKOS-XL labels (skosxl:prefLabel, skosxl:altLabel) are returned as their literal
+    forms in that language, not as label resources.
+    lang: label language (e.g. "en", "fr", "de"). Default: English, except INSEE's
+          classifications, which are returned in French. Labels without a language
+          tag are also accepted.
+    """
     endpoint = endpoint or _endpoint_for_uri(uri)
     if not endpoint:
         raise ValueError(f"No configured endpoint publishes {uri}; pass endpoint=...")
+    lang = _lang(endpoint, lang)
     q = f"""{PREFIXES}
 SELECT ?p ?o WHERE {{ {_iri(uri)} ?p ?o .
   FILTER(!isLiteral(?o) || LANG(?o) = "" || LANGMATCHES(LANG(?o), "{_lit(lang)}")) }}
@@ -353,17 +382,37 @@ LIMIT 500"""
     # as published by INSEE and Eurostat and generated by classif-unsd --notes
     qn = f"""{PREFIXES}
 SELECT ?p ?text (LANG(?text) AS ?lang) ?nlang WHERE {{
-  {_iri(uri)} ?p ?n . ?n xkos:plainText ?text .
-  OPTIONAL {{ ?n dct:language ?nlang }}
+  {{ {_iri(uri)} ?p ?n . ?n xkos:plainText ?text .
+    OPTIONAL {{ ?n dct:language ?nlang }} }}
+  UNION
+  {{ # some publishers (Cellar's NACE Rev. 2.1) give the note text directly as a literal
+    VALUES ?p {{ skos:scopeNote xkos:coreContentNote xkos:additionalContentNote
+                xkos:inclusionNote xkos:exclusionNote xkos:caseLaw }}
+    {_iri(uri)} ?p ?text . FILTER(isLiteral(?text)) }}
 }} LIMIT 100"""
-    rows, nrows = await asyncio.gather(_sparql(endpoint, q), _sparql_safe(endpoint, qn))
+    # SKOS-XL: labels are resources; return their literal forms in the chosen language
+    qx = f"""{PREFIXES}
+SELECT ?p ?lf WHERE {{
+  VALUES ?p {{ <{SKOSXL}prefLabel> <{SKOSXL}altLabel> <{SKOSXL}hiddenLabel> }}
+  {_iri(uri)} ?p ?xl . ?xl <{SKOSXL}literalForm> ?lf .
+  FILTER(LANGMATCHES(LANG(?lf), "{_lit(lang)}") || LANG(?lf) = "")
+}} LIMIT 50"""
+    rows, nrows, xrows = await asyncio.gather(_sparql(endpoint, q), _sparql_safe(endpoint, qn),
+                                              _sparql_safe(endpoint, qx))
     props: dict[str, list[str]] = {}
     for r in rows:
+        if r["p"].startswith(SKOSXL):  # label resources: replaced by their literal forms below
+            continue
         key = re.split(r"[#/]", r["p"])[-1]
         props.setdefault(key, [])
         if r["o"] not in props[key]:
             props[key].append(r["o"])
-    out: dict[str, Any] = {"endpoint": endpoint, "uri": uri, "properties": props}
+    for r in xrows[0]:
+        key = "skosxl:" + r["p"].rsplit("#", 1)[-1]
+        props.setdefault(key, [])
+        if r["lf"] not in props[key]:
+            props[key].append(r["lf"])
+    out: dict[str, Any] = {"endpoint": endpoint, "uri": uri, "language": lang, "properties": props}
     notes: dict[str, list[dict[str, str]]] = {}
     for r in nrows[0]:
         nl = (r.get("lang") or str(r.get("nlang", "")).rsplit("/", 1)[-1]).lower()
@@ -376,16 +425,20 @@ SELECT ?p ?text (LANG(?text) AS ?lang) ?nlang WHERE {{
 
 @mcp.tool()
 async def get_hierarchy(
-    uri: str, direction: str = "up", endpoint: str | None = None, lang: str = "en"
+    uri: str, direction: str = "up", endpoint: str | None = None, lang: str | None = None
 ) -> dict[str, Any]:
     """Walk the hierarchy of a classification item.
 
     direction: "up" returns all ancestors (section, division, group, ...);
                "down" returns the direct children.
+    lang: label language (e.g. "en", "fr", "de"). Default: English, except INSEE's
+          classifications, which are returned in French. Labels without a language
+          tag are also accepted.
     """
     endpoint = endpoint or _endpoint_for_uri(uri)
     if not endpoint:
         raise ValueError(f"No configured endpoint publishes {uri}; pass endpoint=...")
+    lang = _lang(endpoint, lang)
     if direction == "up":
         # fixed-length steps (1..8 levels), not skos:broader+ : on large stores such as
         # Cellar the open-ended path times out, fixed paths are answered at once
@@ -420,7 +473,7 @@ SELECT DISTINCT ?x ?code ?label ?d WHERE {{
 
 @mcp.tool()
 async def get_correspondences(
-    uri: str, target_scheme: str | None = None, lang: str = "en"
+    uri: str, target_scheme: str | None = None, lang: str | None = None
 ) -> dict[str, Any]:
     """Return the PUBLISHED links of a classification item, searched on every
     configured endpoint (a link NACE->ISIC may be stored at either end).
@@ -431,11 +484,14 @@ async def get_correspondences(
     that states it, so provenance is traceable.
 
     target_scheme: optional scheme URI to keep only links into that scheme.
+    lang: label language. Default: each target in its publisher's default language
+          (English, except INSEE's classifications in French).
     """
     i = _iri(uri)
     values = " ".join(f"skos:{p}" for p in MATCH_PROPS)
     scheme_filter = f"FILTER(?ts = {_iri(target_scheme)})" if target_scheme else ""
-    q = f"""{PREFIXES}
+    def q(name: str) -> str:
+        return f"""{PREFIXES}
 SELECT DISTINCT ?rel ?dir ?t ?ts ?code ?label ?note WHERE {{
   {{
     VALUES ?p {{ {values} }}
@@ -450,13 +506,13 @@ SELECT DISTINCT ?rel ?dir ?t ?ts ?code ?label ?note WHERE {{
   }}
   OPTIONAL {{ ?t skos:inScheme ?ts }}
   OPTIONAL {{ ?t skos:prefLabel ?label .
-             FILTER(LANGMATCHES(LANG(?label), "{_lit(lang)}") || LANG(?label) = "") }}
+             FILTER(LANGMATCHES(LANG(?label), "{_lit(_lang(name, lang))}") || LANG(?label) = "") }}
   {CODE_PATTERN.format(v="?t", out="?code")}
   {scheme_filter}
 }} LIMIT {MAX_ROWS}"""
     out: dict[str, Any] = {"uri": uri, "links": [], "errors": {}}
     names = list(ENDPOINTS)
-    results = await asyncio.gather(*(_sparql_safe(n, q) for n in names))
+    results = await asyncio.gather(*(_sparql_safe(n, q(n)) for n in names))
     seen: set[tuple[str, str, str]] = set()
     for name, (rows, err) in zip(names, results):
         if err:
@@ -486,7 +542,7 @@ SELECT DISTINCT ?rel ?dir ?t ?ts ?code ?label ?note WHERE {{
     return out
 
 
-async def _fill_target_labels(links: list[dict[str, Any]], lang: str) -> None:
+async def _fill_target_labels(links: list[dict[str, Any]], lang: str | None) -> None:
     """A link stated by one publisher often points into another's classification
     (COICOP 2018 -> Caliper's COICOP 1999, ISIC Rev. 4 -> NACE). Fetch the missing
     code, label and scheme of such targets from the endpoint that publishes them."""
@@ -496,7 +552,7 @@ async def _fill_target_labels(links: list[dict[str, Any]], lang: str) -> None:
         # look up targets with no label, and every target of a scoped endpoint: an item
         # can belong to several schemes (a Cellar HS item is also a CN item), and the
         # scheme reported must be the one in scope
-        if ep and (not l["target_label"] or _scope(ep)):
+        if ep and (not l["target_label"] or _scope(ep) or not lang):
             by_ep.setdefault(ep, set()).add(l["target"])
     if not by_ep:
         return
@@ -507,7 +563,7 @@ async def _fill_target_labels(links: list[dict[str, Any]], lang: str) -> None:
 SELECT ?t ?code ?label ?ts WHERE {{
   VALUES ?t {{ {values} }}
   OPTIONAL {{ ?t skos:prefLabel ?label .
-             FILTER(LANGMATCHES(LANG(?label), "{_lit(lang)}") || LANG(?label) = "") }}
+             FILTER(LANGMATCHES(LANG(?label), "{_lit(_lang(ep, lang))}") || LANG(?label) = "") }}
   OPTIONAL {{ ?t skos:inScheme ?ts }}
   {CODE_PATTERN.format(v="?t", out="?code")}
 }}"""
@@ -524,8 +580,9 @@ SELECT ?t ?code ?label ?ts WHERE {{
                 found.setdefault(r["t"], r)
     for l in links:
         f = found.get(l["target"])
-        if f and not l["target_label"]:
-            l["target_label"] = f.get("label", "")
+        # the publisher's label in its language replaces one found at the stating endpoint
+        if f and (not l["target_label"] or (not lang and f.get("label"))):
+            l["target_label"] = f.get("label", "") or l["target_label"]
             l["target_code"] = l["target_code"] or f.get("code", "")
         ep = _endpoint_for_uri(l["target"])
         all_s = schemes.get(l["target"], set())
@@ -540,7 +597,7 @@ SELECT ?t ?code ?label ?ts WHERE {{
 
 @mcp.tool()
 async def match_by_code(
-    code: str, target_scheme: str, endpoint: str | None = None, lang: str = "en"
+    code: str, target_scheme: str, endpoint: str | None = None, lang: str | None = None
 ) -> dict[str, Any]:
     """DERIVE a candidate link by code, in either direction:
 
@@ -558,6 +615,7 @@ async def match_by_code(
     endpoint = endpoint or _endpoint_for_uri(target_scheme)
     if not endpoint:
         raise ValueError(f"No configured endpoint publishes {target_scheme}; pass endpoint=...")
+    lang = _lang(endpoint, lang)
     norm = _norm_code(code)
     candidates = [norm[:n] for n in range(len(norm), 0, -1)]
     values = " ".join(f'"{_lit(c)}"' for c in candidates)
@@ -607,6 +665,97 @@ SELECT DISTINCT ?c ?code ?label WHERE {{
             r = down[0]
             out["match"] = {"uri": r["c"], "code": r.get("code", ""), "label": r.get("label", ""),
                             "matched_on": norm, "direction": "down"}
+    return out
+
+
+NACE21_TO_ISIC5 = [
+    "http://data.europa.eu/ux2/nace2/nace2",
+    "https://unstats.un.org/classifications/ISIC/rev4/scheme",
+    "http://classif-mcp.local/unsd/isic-rev5/scheme",
+]
+
+
+@mcp.tool()
+async def derive_by_chain(uri: str, via: list[str] | None = None,
+                          lang: str | None = None) -> dict[str, Any]:
+    """DERIVE candidate links by chaining correspondences, when no direct table exists.
+    Each step is a published link (or one converted from the publisher's file).
+
+    via: the scheme URIs to go through, in order; the last one is the target.
+         Default: NACE Rev. 2 -> ISIC Rev. 4 -> ISIC Rev. 5, which gives
+         NACE Rev. 2.1 -> ISIC Rev. 5 (no NACE Rev. 2.1 - ISIC Rev. 5 table is published):
+         http://data.europa.eu/ux2/nace2/nace2,
+         https://unstats.un.org/classifications/ISIC/rev4/scheme,
+         http://classif-mcp.local/unsd/isic-rev5/scheme
+    lang: label language (default: English, except INSEE's classifications in French).
+
+    Returns the candidate targets with every path that leads to them; each step gives
+    its link type, provenance and publisher, and how many targets it fans out to.
+    The result is DERIVED: a candidate set to review, not an official correspondence.
+    A target reached through a 1:n step may cover only part of the item.
+    """
+    via = via or NACE21_TO_ISIC5
+    for sch in via:
+        _check_scope(sch)
+    ep = _endpoint_for_uri(uri)
+    start = {"uri": uri, "code": "", "label": ""}
+    if ep:
+        c = await get_concept(uri, ep, lang)
+        p = c["properties"]
+        start["code"] = (p.get("notation") or p.get("identifier") or [""])[0]
+        start["label"] = (p.get("altLabel") or p.get("prefLabel") or [""])[0]
+    frontier: dict[str, list[list[dict[str, Any]]]] = {uri: [[]]}
+    hidden = 0
+    stopped_at = None
+    for sch in via:
+        nxt: dict[str, list[list[dict[str, Any]]]] = {}
+        results = await asyncio.gather(*(get_correspondences(u, None, lang) for u in frontier))
+        for (u, upaths), res in zip(frontier.items(), results):
+            hidden += res.get("out_of_scope_links_hidden", 0)
+            by_target: dict[str, dict[str, Any]] = {}
+            for l in res["links"]:
+                if l.get("target_scheme") != sch:
+                    continue
+                t = by_target.setdefault(l["target"], {
+                    "to": l["target"], "code": l.get("target_code", ""),
+                    "label": l.get("target_label", ""), "links": []})
+                link = {"relation": l["relation"], "direction": l["direction"],
+                        "provenance": l["provenance"].split(" [")[0], "stated_at": l["stated_at"]}
+                if l.get("note"):
+                    link["note"] = l["note"]
+                t["links"].append(link)
+                if not t["label"] and l.get("target_label"):
+                    t["label"] = l["target_label"]
+            for t in by_target.values():
+                step = {"from": u, **t, "fan_out": len(by_target)}
+                for up in upaths:
+                    nxt.setdefault(t["to"], []).append(up + [step])
+        if not nxt:
+            stopped_at = sch
+            break
+        frontier = nxt
+    targets = []
+    if stopped_at is None:
+        for t_uri, tpaths in frontier.items():
+            last = tpaths[0][-1]
+            targets.append({
+                "uri": t_uri, "code": last["code"], "label": last["label"],
+                "one_to_one_path": any(all(s["fan_out"] == 1 for s in pth) for pth in tpaths),
+                "paths": tpaths})
+    targets.sort(key=lambda t: t["code"])
+    out: dict[str, Any] = {
+        "provenance": "derived (chain of correspondences; not an official correspondence table)",
+        "source": start, "via": via, "targets": targets,
+        "cardinality": ("none" if not targets else "1:1" if len(targets) == 1
+                        else f"1:{len(targets)}"),
+        "note": ("Each step is a published or converted link (see its provenance). With more "
+                 "than one target the item is split across them: a candidate set to review, "
+                 "not a mapping."),
+    }
+    if stopped_at:
+        out["stopped_at"] = stopped_at
+    if hidden:
+        out["out_of_scope_links_hidden"] = hidden
     return out
 
 

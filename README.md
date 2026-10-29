@@ -267,6 +267,9 @@ Everything below is done in a web browser. Nothing is installed locally.
 | `get_hierarchy` | Return all ancestors (`up`) or the direct children (`down`). |
 | `get_correspondences` | Return all links of an item, searched on **every** endpoint and in both directions, each with its provenance. |
 | `match_by_code` | Return a derived, code-based candidate link, in either direction. Upwards it covers NAF 62.10Y → NACE 62.10 and EAP 3092120000 → PRODCOM 30.92.12.00. Downwards it returns national extensions of a code: PRODCOM 30.92.12.00 → EAP 3092120000, NACE 62.10 → NAF 62.10Y. It is marked as derived. |
+| `derive_by_chain` | Return derived candidate links by chaining correspondences when no direct table exists. By default NACE Rev. 2.1 → NACE Rev. 2 → ISIC Rev. 4 → ISIC Rev. 5. Every step gives its link type, provenance and publisher, and how many targets it fans out to. Marked as derived. |
+
+**Label language.** Labels (`skos:prefLabel`, and the literal forms of `skosxl:prefLabel` / `skosxl:altLabel`) are returned in English by default, and INSEE's in French (`default_lang = "fr"` in `endpoints.toml`), unless another language is asked for with `lang`. Search words are matched in every language. Explanatory notes fall back to another language when none exists in the one asked for; each note gives its language.
 | `run_sparql` | Run a read-only SELECT as an escape hatch. |
 
 ## Demo prompts
@@ -298,6 +301,7 @@ Endpoints are declared in `endpoints.toml`:
 - Environment variables:
   - `CLASSIF_MCP_TIMEOUT`: request timeout in seconds, default 45.
   - `CLASSIF_MCP_MAX_ROWS`: maximum rows per query, default 200.
+- `default_lang` on an endpoint sets the language of its labels when none is asked for (default English).
 
 ## Verified against the live sources (26 October 2026)
 
@@ -358,6 +362,13 @@ Endpoints are declared in `endpoints.toml`:
 NACE Rev. 2.1 (and NOGA 2025, NAF 2025) kept a single class, 62.10. Without a published NACE 2.1–ISIC 5 table, the only traceable path between them goes through the previous versions:
 
 NACE 2.1 62.10 → NACE 2 62.01 → ISIC 4 6201 → ISIC 5 6211 / 6219
+
+`derive_by_chain` computes this path for any NACE Rev. 2.1 class. Over the whole classification (checked 29 October 2026):
+- 650 of the 651 NACE Rev. 2.1 classes have a published link to NACE Rev. 2 in Cellar, and all 650 reach ISIC Rev. 5;
+- 367 reach exactly one ISIC Rev. 5 class (350 of them with every step 1:1);
+- 283 reach several candidates (153 two, 59 three, 24 four, 47 five or more).
+
+A chained result can include too much. NACE Rev. 2.1 30.92 (bicycles, now including e-bikes) leads to ISIC Rev. 5 3092 and also to 3091 (motorcycles), through NACE Rev. 2 30.91, where e-bikes used to be. The candidates are for review, not a correspondence table.
 
 ## Status and limits (v0.1)
 

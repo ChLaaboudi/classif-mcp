@@ -198,6 +198,8 @@ schemes = [
 # so EAP <-> PRODCOM is derived (match_by_code). EMB items carry published links
 # (skos:relatedMatch) to NAF 2025.
 [endpoints.insee]
+# labels and notes in French unless another language is asked for
+default_lang = "fr"
 label = "INSEE - NAF 2025, NAF rev. 2, CPF rev. 2.1, EAP 2025 and EMB 2026 (France)"
 level = "national"
 country = "FR"
