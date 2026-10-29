@@ -1,0 +1,881 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xkos: <http://rdf-vocabulary.ddialliance.org/xkos#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+
+<http://classif-mcp.local/unsd/csa2/101> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/101/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/101/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities on population and demographic statistics; topics like demography, vital statistics, population structures and growth, demographic projections, families and households (marriages, divorces, household size)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/101> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/101/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/101/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Causes of death (105)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/102> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/102/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/102/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the movement of people, refugees, asylum seekers, internally displaced people, workers, the duration of migration stay or absence, immigration, emigration, migrant flows and stocks, including related migration governance indicators, etc.\nIncludes also:\n• Internally displaced people"@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/102> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/102/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/102/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Human trafficking (408).\n• Stateless persons (504)"@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/103> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/103/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/103/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on work including both employment and work not for pay or profit, labour force, labour market, and unemployment. The more detailed topics include, among others, economically active population, labour conditions, new working arrangements (new forms of work), health and safety at work (accidents at work, occupational injuries and diseases, work-related health problems), working time and other working conditions, strikes and lockouts, job vacancies, job creation, wages and salaries, and labour costs."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/103> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/103/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/103/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Unemployment insurance and unemployment benefits (107)\n• Trade union membership (402)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/104> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/104/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/104/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on educational participation, illiteracy, educational institutions and systems, human and financial resources invested in education, lifelong learning, vocational training and adult learning, impact of education, assessments of student performance, etc."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/105> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/105/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/105/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers health and mortality related statistical activities, including topics like life expectancy, health status, health and safety, health determinants (including lifestyle, nutrition, smoking, alcohol and drug use), health resources and expenditure, health care systems, morbidity and mortality (including infant and child mortality), hospital admission, causes of illness and death, specific diseases (e.g. AIDS), disabilities, pharmaceutical consumption and sales, health personnel, remuneration of health professions, environmental health status, health inequality."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/105> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/105/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/105/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Work related health and safety (103)\n• Victimization from criminal behaviour (408)\n• Traffic accidents and injuries (20304)\n• Health accounts (20101)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/106> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/106/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/106/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on household income and expenditures from the household or individual viewpoint (all types of income and expenditure), including topics like distribution of incomes, in-kind income, income transfers received and paid, income or expenditure-based measures of poverty, consumer protection, consumption patterns, consumer goods and durables, household wealth and debts."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/106> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/106/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/106/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Social protection schemes against various risks (107)\n• Tax schemes (20103)\n• Poverty in a multidimensional sense (505)\n• Living conditions (505)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/107> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/107/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/107/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on measures to protect people against the risks of inadequate incomes associated with unemployment, ill health, invalidity, old age, parental responsibilities, or following the loss of a spouse or parent, etc., includes statistics on pension beneficiaries, social security schemes, social protection expenditure, etc."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/107> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/107/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/107/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Insurance companies as economic actors (20306)\n• Pension funds as actors in financial markets (20306)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/108> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/108/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/108/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on housing, dwellings and human settlements."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/109> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/109/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/109/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities dealing with cultural activities in society, such as theatre, cinemas, museums, libraries, mass media, music, book production, sports and recreation, expenditure and financing of culture."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/110> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/110/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/110/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the use of time by individuals, often related to work-life balance (reconciling family responsibilities and paid work) and unpaid work, leisure time, personal activities, and social connections."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/199> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/199/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/199/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "A residual category for any activities on demographic and social statistics that cannot be classified under the areas above."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/201> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/201/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/201/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on macroeconomic accounts and macroeconomic statistics. It includes institutional sectors and industries. This category includes the aggregation, consolidation and reconciliation of the different components of economic statistics."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20101> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20101/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20101/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on National Accounts. This category includes the compilation of the integrated economic accounts, as well as extended and thematic accounts (satellite accounts) and tables, regional accounts, (extended) supply and use tables, input-output tables and from whom-to-whom tables. This includes macroeconomic statistics on the informal economy as well as on the illegal economy."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20101> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/20101/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/20101/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Balance of payments and international investment position (20102)\n• Government finance statistics (20103)\n• Monetary and financial statistics (20104)\n• System of Environmental Economic Accounting (20105)\n• Composite indicators covering multiple areas of the economy (20199)\n• Safety and security (408)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20102> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20102/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20102/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on balance of payments and international investment positions, including Foreign Direct Investment (FDI)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20102> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/20102/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/20102/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• International trade on goods and services statistics (204)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20103> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20103/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20103/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the general government sector and the broader public sector.  It covers the compilation of data on revenues, expenditures, transactions in financial assets and liabilities, and balance sheet data."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20104> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20104/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20104/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the compilation of stock and flow of data on the financial and nonfinancial assets and liabilities of an economy's financial corporations sector, and the compilation of stock and flow data on the financial assets and liabilities of all other sectors of an economy."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20104> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/20104/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/20104/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Government finance statistics (20103)\n• Banking, insurance, financial market statistics (20306)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20105> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20105/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20105/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the System of Environmental-Economic Accounting (SEEA). Includes ecosystem accounts and thematic accounts such as water accounts, energy accounts, forest accounts, ocean accounts, biodiversity accounts, etc. Excludes activities on traditional environment statistics which are not compiled in the format of accounts."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20105> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/20105/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/20105/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Agriculture, forestry and fishing statistics (20301)\n• Energy statistics (20302)\n• Environment statistics (3)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20199> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20199/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20199/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on macroeconomic accounts and statistics that are nowhere else classified. It includes business cycle analysis, composite indicators, etc."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/202> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/202/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/202/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on economy-wide activities of businesses across different sectors (as opposed to 20301-20307 that deal with specific individual sectors). Covers topics like statistics on economic activities of businesses, business demography, business investment, business services, demand for services, industrial performance, enterprises by size class, industrial production, commodities, structure of sales and services, outputs of the service industries, non-profit institutions, labour statistics collected from businesses."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/202> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/202/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/202/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Sectoral statistics (203)\n• Social and solidarity economy (510)\n• Statistical business registers (60301)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20201> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20201/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20201/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities on business statistics with higher than annual frequency (e.g., quarterly, monthly, etc.) across multiple industries. It includes business tendency surveys, and employment and wages surveys if they are conducted among businesses."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20201> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/20201/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/20201/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Wages reported as a source of household income (106)\n• Short-term statistics on a specific sector (203)\n• Short-term indicators on international trade (204)\n• Producer Price Indices (PPI) (205)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20202> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20202/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20202/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the structure, economic activity, and performance of businesses across multiple industries on an annual basis."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20202> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/20202/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/20202/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Business demography and business dynamics (20203)\n• Entrepreneurship (20204)\n• Sectoral statistics (203)\n• Trade in goods statistics by enterprise characteristics (TEC) and Services trade by enterprise characteristics (STEC) (204)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20203> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20203/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20203/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities on statistics on birth, death and survival rates of enterprises and other such events in the entire economy or in specific industries."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20203> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/20203/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/20203/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Structural business statistics (20202)\n• Entrepreneurship (20204)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20204> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20204/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20204/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the measurement of the determinants, performance and impact of entrepreneurial activities of people and organizations. It also includes the studies of entrepreneurship from the perspective of gender and other population sub-groups."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20205> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20205/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20205/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on multinational enterprises across different industries. It also includes foreign affiliate statistics (FATS) but excludes foreign direct investments of multinational enterprises."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20205> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/20205/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/20205/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Foreign direct investment (FDI) (20102)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20299> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20299/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20299/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities on other areas of business statistics that are not elsewhere classified. Includes, for example, statistics on the impact of businesses on well-being and sustainability, etc."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/203> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/203/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/203/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers a range of statistical activities on specific sectors or segments of the economy as defined in the categories below."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/203> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/203/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/203/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Education (104)\n• Health (105)\n• Social protection (107)\n• Culture (109)\n• Macroeconomic accounts and statistics (201)\n• Business statistics (202)\n• Research and development (206)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20301> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20301/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20301/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities related to agriculture, forestry and fishing. Includes agricultural monetary statistics (agricultural economic accounts), agricultural structures (farm structure), trade in agricultural products, crop and animal production, agricultural commodities, agro-industry statistics (including food production and safety), food and food security, organic farming and organic food, products source and use tables, forest and forest product statistics, trade in forest products, fisheries."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20301> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/20301/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/20301/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Agricultural labour input (103)\n• Government expenditure for agriculture, forestry and fishing (20103)\n• Forest resource assessment (20105)\n• Environmental accounting for agriculture, forestry and fishing (20105)\n• Forest fire (304)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20302> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20302/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20302/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on energy supply, energy use, energy balances, security of supply, energy markets, domestic trade in energy, energy efficiency, renewable energy sources."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20302> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/20302/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/20302/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Expenditure of households on energy consumption (106)\n• Energy accounts (20105)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20303> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20303/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20303/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the specific industrial activities of mining, manufacturing and construction."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20303> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/20303/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/20303/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Prices of manufactured products and Producer Price Indices (PPI) (205)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20304> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20304/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20304/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on all modes of domestic transport (air, rail, road, inland waterways, sea, pipelines); includes topics like transport infrastructure, equipment, traffic flows, personal mobility, safety, transport accidents, energy consumption, transport enterprises, passengers and freight transport, transport sector trends, road traffic accidents."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20304> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/20304/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/20304/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Transport prices (205)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20305> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20305/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20305/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities regarding visitor activity (such as arrivals/departures, overnight stays, expenditures, purpose of the visit, etc.) associated with different forms of tourism (inbound, domestic and outbound), tourism industries activity and infrastructure, and employment as reported by tourism industries."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20305> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/20305/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/20305/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Tourism satellite accounts (20101)\n• Prices for tourist services (205)\n• Environmental impacts of tourism (305)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20306> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20306/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20306/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities on banking, insurance and other financial market statistics, including money supply, interest rates, exchange rates, stock market indicators, securities, bank profitability, private sector insurance and statistics on the management of pension funds, and financial soundness indicators."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20306> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/20306/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/20306/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Beneficiaries of private pension funds (107)\n• Financing of state pension and of other state social security schemes (107)\n• Monetary and financial statistics (20104)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20307> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20307/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20307/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on wholesale and retail trade."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20307> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/20307/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/20307/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• International trade (204)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/20399> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/20399/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/20399/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities in other areas of sectoral statistics that are not elsewhere classified. Includes, for example, real estate statistics."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/204> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/204/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/204/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on trans-border trade in goods and services. Includes statistics on trade in goods by enterprise characteristics (TEC) and services trade by enterprise characteristics (STEC), international transport, tariffs, market access, foreign aid, development assistance, resource flows to developing countries."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/204> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/204/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/204/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Balance of payments (20102)\n• Foreign direct investment (FDI) (20102)\n• Foreign affiliates statistics (FATS) (20205)\n• Wholesale and retail trade (20307)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/205> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/205/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/205/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities dealing with prices, including Purchasing Power Parities (PPPs) and international comparisons of GDP; Consumer Price Indices (CPI), inflation, Producer Price Indices (PPI), price indices for specific products and services (e.g., Information and Communication Technology products or rents)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/205> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/205/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/205/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Wages (106 and 20201)\n• Interest rates (20306)\n• Exchange rates (20306)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/206> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/206/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/206/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on Research and Development (R&D), innovation, patents, human resources in science, technology, high-tech industries and knowledge-based services, biotechnology, financing of R&D, and innovation."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/206> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/206/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/206/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Information and Communication Technology (ICT) (508)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/299> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/299/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/299/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities in other areas of economic statistics that are not elsewhere classified."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/3> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/3/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/3/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the state and changes of environmental conditions, the quality and availability of environmental resources, the impact of human activities and natural events on the environment and the impact of changing environmental conditions. The breakdown in this domain into six components follows the structure of the Framework for the Development of Environment Statistics (FDES) endorsed by the UN Statistical Commission in 2013 with updated terminology where necessary. More detailed breakdown of the components can be found in the FDES."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/3> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/3/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/3/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• System of Environmental-Economic Accounting (20105)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/301> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/301/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/301/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the physical, biological and chemical characteristics of the environment and their changes over time. The component includes: physical conditions with statistics on meteorological, hydrographical, geological, geographical conditions and soil characteristics; land cover, ecosystems and biodiversity; and environmental quality with statistics on noise, pollution of air, water and soil."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/302> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/302/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/302/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on stocks, changes in stocks and their use for production and consumption of environmental resources. The component includes: mineral resources; energy resources; land; soil resources; biological resources; and water resources (including oceans)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/303> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/303/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/303/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the flows of solid, liquid and gaseous materials, and energy, that are discarded, discharged or emitted by establishments and households through processes (of production, consumption or accumulation. The component includes: emissions to air; generation and management of wastewater; generation and management of waste; and release of chemical substances."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/304> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/304/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/304/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the occurrence of hazardous events and disasters and their impacts on human well-being and the infrastructure. The component includes statistics on the occurrence, frequency and intensity of hazardous events and disasters, as well as their impact on human lives and habitats, and the environment as a whole."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/305> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/305/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/305/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the environment in which humans live and work, particularly with regard to living conditions and environmental health. The component includes: human settlements, with statistics on urban and rural population, housing conditions and exposure to ambient pollution; and environmental health with statistics on airborne, vector-borne, water-related diseases, and the impacts of environmental conditions and pollution on human health."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/306> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/306/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/306/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers the statistical activities on resources dedicated to environmental protection, management and engagement. The component includes: environmental protection and resource management expenditure; environmental governance and regulation; hazardous event preparedness and disaster management; and environmental information and awareness."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/399> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/399/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/399/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "A residual category for any activities on environment statistics that cannot be classified under the areas above."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/4> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/4/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/4/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "The breakdown in this domain follows the structure of the Handbook of Governance Statistics (HGS) approved by the UN Statistical Commission in 2020. More detailed breakdown on statistical areas can be found in the HGS. (This Domain replaces and expands subdomain 1.8 ‘Justice and crime’ of the earlier version of the classification (CSA 2009))."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/401> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/401/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/401/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on differential treatment based on age, sex, disability, race, ethnicity, origin, religion or economic or other status that has the intention or effect of impairing human rights and fundamental freedoms. It covers both direct and indirect discrimination."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/402> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/402/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/402/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the ways in which individuals take part in political and public affairs, including by registering to vote, voting or standing as a candidate in elections; being members of legislative, executive and judicial bodies; accessing positions in the public service; being a member of a trade union; and engaging, individually or as members of political parties and other non-governmental organizations, in political activities."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/403> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/403/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/403/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the extent to which public institutions provide access to information and are transparent in their decision- and policy-making processes. More specifically, covers access to information, open government provisions, freedom of expression and media pluralism."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/404> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/404/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/404/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the ability of people to defend and enforce their rights and obtain just resolution of justiciable problems, through impartial formal or informal institutions of justice and with appropriate legal support. Covers both criminal and civil justice, including the accessibility, effectiveness and quality of legal assistance, processes, decisions and outcomes."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/404> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/404/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/404/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n* Statistical activities on criminal acts (40801)"@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/405> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/405/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/405/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the responsiveness of governments, which is defined as the degree to which public institutions listen to what people want. Statistics on responsiveness typically focus on the perceived responsiveness of governments, i.e., their belief they have a say in what the government does, and their satisfaction with government services, particularly health and education."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/406> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/406/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/406/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on: (1) the level of intolerance to corruption (i.e., ethical values, principles and norms that strengthen resistance to corruption practices); (2) the levels and patterns of corrupt practices; and (3) the response to corruption by the state."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/407> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/407/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/407/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on people’s trust in institutions as well as in other people, with a primary focus on the former, e.g., the parliament, the national government and the justice system."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/408> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/408/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/408/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on crime, victimization, violence, perceptions of safety, human trafficking, measurement of casualties directly provoked by armed operations, and the quality of law enforcement and criminal justice institutions."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/40801> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/40801/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/40801/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities related to crimes, including violent and non-violent criminal acts (refer to the International Classification of Crime for Statistical Purposes (ICCS) for a breakdown of criminal offenses), and related to criminal justice systems and victimization."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/40801> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/40801/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/40801/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Access and management of justice (404)"@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/40899> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/40899/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/40899/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "A residual category for any activities on safety and security statistics not elsewhere classified. It includes safety and security statistics related to armed conflicts."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/499> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/499/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/499/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "A residual category for any governance statistics that cannot be classified under the areas above."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/5> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/5/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/5/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on conceptual issues or data work based on thematic approaches that require bringing together data across different domains to meet the data needs for policy agendas for development. This domain also covers statistical activities that span two or more of the previous subject-matter domains, or those not elsewhere classified."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/501> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/501/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/501/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on indicators and frameworks to monitor sustainable development, including indicators for assessing progress towards the Sustainable Development Goals."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/501> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/501/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/501/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• System of Environmental-Economic Accounting (20105)\n• Environment statistics (3)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/502> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/502/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/502/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on indicators and frameworks to monitor human rights (e.g., Human Rights-Based Approach to Data, Protocol of San Salvador indicators)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/503> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/503/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/503/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on indicators and frameworks to monitor gender equality across statistical domains. It includes statistical activities to monitor differences and inequalities in the situation of women and men, girls and boys, in all areas of life, as well as gender identity and sexual orientation."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/504> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/504/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/504/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers work on indicators and frameworks to monitor special population groups, such as children, youth, older persons, indigenous people, persons with disabilities, minority groups, ethnocultural groups, stateless persons, etc. (e.g., indicators on ageing) across statistical domains."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/504> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/504/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/504/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Non-discrimination and equality (401)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/505> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/505/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/505/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on indicators and frameworks to monitor wellbeing, and living conditions and poverty, covering its different aspects: economic, social, etc. (e.g., Human Development Index, Multidimensional Poverty Index). Includes activities on multidimensional methods to measure poverty, living conditions in the broad sense, quality of life, social inclusion/exclusion, social indicators, and social situation."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/506> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/506/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/506/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities on climate change-related statistics, indicators and frameworks (e.g., sets of climate change-related indicators and statistics). This can concern greenhouse gas emissions, climate change drivers, impacts, mitigation and adaptation."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/506> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/506/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/506/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• System of Environmental-Economic Accounting (20105)\n• Environment statistics (3)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/507> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/507/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/507/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities on regional statistics and statistics referring to sub-national areas or areas based on administrative units, urban and rural statistics, rural development, regional accounts, regional typologies, and regional disparities."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/507> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/507/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/507/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Data disaggregation (606)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/508> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/508/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/508/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities on statistics, indicators and frameworks to monitor digital transformation and the use and impact of information and communication technologies (ICT) on society. Looks at these topics in a wider sense than economic aspects, including well-being in a digital society. Includes statistical activities on internet use, internet application, information and communications technology trade, computer use, broadband connectivity, e-commerce, etc."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/508> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/508/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/508/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Business statistics (202)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/509> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/509/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/509/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on indicators to monitor the progress towards a circular economy (e.g., the European Commission’s Circular Economy Indicators, the OECD Inventory of Circular Economy Indicators)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/509> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/509/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/509/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Business statistics (202)\n• System of Environmental-Economic Accounting (20105)\n• Environment statistics (3)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/510> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/510/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/510/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers work on indicators to monitor the social and solidarity economy as it encompasses enterprises, organizations and other entities that are engaged in economic, social, and environmental activities to serve the collective and/or general interest, which are based on the principles of voluntary cooperation and mutual aid, democratic and/or participatory governance, autonomy and independence, and the primacy of people and social purpose over capital in the distribution and use of surpluses and/or profits as well as assets."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/599> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/599/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/599/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities on statistical subject-matter areas that are not classified in Domains 1-4 above or any of the previous cross-cutting statistics. Serves as a place-holder for any over-arching policy frameworks that may appear."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/601> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/601/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/601/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities related to developing, defining, harmonizing and standardizing statistical metadata for statistical information processing and dissemination purposes, as well as models, structures, frameworks and metadata standards pertaining to these processes of producing and disseminating metadata. Metadata created for statistical purposes might also be used for other needs, such as administrative purposes. It covers SDMX, DDI, GSIM, etc."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/601> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/601/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/601/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes: \n• Classifications (602)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/602> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/602/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/602/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities related to developing, managing, maintaining and harmonizing classifications for statistical purposes in various subject-matter areas (economic, social, environmental and governance statistics, etc.)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/60301> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/60301/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/60301/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities related to the development and maintenance of statistical business registers."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/60301> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/60301/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/60301/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Agricultural registers (60304)\n• Business and agricultural censuses (60402)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/60302> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/60302/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/60302/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities related to the development and maintenance of statistical population registers. They include registers of the whole or part of the resident population, and registers of non-resident population such as emigrant registers. Includes civil and vital events registers."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/60302> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/60302/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/60302/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Register-based censuses (60401)\n• Registers of dwellings and buildings (60303)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/60303> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/60303/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/60303/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities related to the development and maintenance of statistical registers of buildings, dwellings and infrastructure, covering all residential, non-residential buildings and dwellings, and elements of infrastructure."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/60304> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/60304/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/60304/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities related to the development and maintenance of agricultural registers."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/60304> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/60304/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/60304/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Statistical business registers (60301)\n• Economic and agricultural censuses (60402)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/60399> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/60399/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/60399/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities related to other types of statical registers not elsewhere classified."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/604> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/604/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/604/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities related to the identification, assessment, methods and implementation of data collection and data gathering. Includes censuses, surveys, administrative data and other data sources including privately held data."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/60401> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/60401/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/60401/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities on methodology, organization and operation of population and housing censuses, including register-based censuses."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/60402> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/60402/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/60402/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities on methodology, organization and operation of economic and agricultural censuses."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/60403> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/60403/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/60403/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities on methodology, organization and operation of household sample surveys, and sample surveys of individuals (e.g. surveys of individuals living in institutions, or cross-border surveys for migration stats). It includes sample designs; international surveys with direct data collection from households such as Living Standard Measurement Survey of the World Bank and the World Health Survey of the World Health Organization."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/60404> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/60404/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/60404/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities on methodology, organization and operation of business and agricultural surveys, including sampling, and international surveys with direct data collection from businesses."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/60405> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/60405/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/60405/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities dealing with the identification, methodological and technical assessment of suitability, and collection of administrative data for statistical purposes. It includes activities on the legal, organizational and conceptual problems of accessing administrative sources, and the use of registers and other administrative sources in other contexts than censuses."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/60499> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/60499/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/60499/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers statistical activities on the identification and suitability for official statistics of other data sources that are not specified elsewhere. For example, privately-held data and non-traditional (big) data sources, etc. It includes activities on the legal, organizational, technical and conceptual problems of accessing these data sources."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/605> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/605/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/605/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities related to the development of appropriate arrangements for data exchange and sharing, the protection of confidentiality and the development of disclosure methods. This also includes the development of data exchange infrastructure. Data exchange and sharing can take place with different institutions in the countries, with research institutions and also with international and regional organizations."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/605> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/605/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/605/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Metadata (601)\n• Data dissemination and communication (610)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/606> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/606/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/606/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities related to data processing and analysis at the process and analyse phases, including data integration, data classification and coding, data validation, data imputation and weight calculation, seasonal adjustment, methods for constructing composite indices, indicators, identification of causal factors, data disaggregation, etc."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/607> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/607/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/607/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities applying the tools, methods and practices of the digital and data age to create new understanding and improve decision-making. Includes AI, data mining, machine learning, big data, etc."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/607> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/607/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/607/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Data processing and analysis (606)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/608> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/608/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/608/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities related to methodological and IT developments to facilitate the use of geospatial data for statistical purposes and the integration of statistical and geospatial data. The activity can concern all phases of the statistical business process, in particular the collection, processing, analysis and dissemination."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/609> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/609/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/609/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities on legal, organizational and technical measures to safeguard confidentiality of statistical data; methods of releasing microdata while protecting against disclosure of individual data."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/609> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/609/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/609/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes: \n• Data exchange and sharing of individual data (605)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/610> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/610/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/610/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities on policies, strategies, methods and techniques of data dissemination, design and organization of output databases such as data warehouses, data lakes and virtualized data to users, such as researchers, academia, decision-makers of public policies, and ordinary citizens. Includes activities for the collection of feedback from users, data and metadata presentation, electronic dissemination (Internet), statistical portals and open data. Includes best practices for communicating with the media and work of NSO press offices."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/699> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/699/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/699/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities on the statistical infrastructure and methodology that are not elsewhere classified. It includes common statistical infrastructure, statistical frameworks and integration."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/7> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/7/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/7/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "The statistical activities in the domain are mapped to the Generic Activity Model for Statistical Organizations (GAMSO). The domain also includes international statistical coordination activities."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/701> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/701/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/701/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities dealing with developing, harmonizing and revising the institutional framework and principles of official statistics at national and international level, such as fundamental principles of official statistics, codes of practice, organizational and legal aspects of national statistical systems, functioning of the statistical systems, organization of statistical offices, ethics, value and promotion of official statistics, and the increasing role of national statistical offices in a wider data ecosystem including data stewardship.\nCorresponds to GAMSO categories 1 Strategy and leadership (including 1.1 Define vision and 1.2 Govern and lead) and part of 3.1 related to managing legislation."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/702> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/702/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/702/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers the coordination within national statistical systems, as well as strategic partnerships with other data producers within a country. Covers the processes for setting up national statistical programs, including relationship with users and respondents, promotion and use of common data standards and classifications, etc.\nCorresponds to GAMSO category 1.3 Manage strategic collaboration and cooperation."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/702> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/702/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/702/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• International statistical coordination (707)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/703> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/703/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/703/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers activities on quality frameworks and measurement of performance of statistical systems and offices:  developing and administering a quality framework and tools to assure quality, i.e., compliance with the quality framework that should cover quality linked to the organizational framework, processes and products, and promoting, developing and monitoring quality management within and outside the national statistical system. Comprises work on quality indicators, user surveys, self-assessments, quality reviews or audits, certification and labelling of statistics. Quality documentation here refers to the organizational level and covers quality declarations, policies and relevant guidelines such as guidelines on handling of errors and revisions.\nCorresponds to GAMSO category 3.10 Manage quality."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/704> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/704/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/704/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers managing employee performance, recruitment, skills development, talent management and succession planning. \nCorresponds to GAMSO category 3.8 Manage human resources."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/705> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/705/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/705/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers coordination and management of information technology and information and knowledge. Management of IT includes management of the physical security of data and IT, IT assets and services, and managing technological change. Information and knowledge management includes the ownership or custody of records, documents, information and other intellectual assets held by the organization and the governance of information collection, arrangement, storage, maintenance, retrieval, dissemination and destruction. It also includes maintaining the policies, guidelines and standards regarding information management and governance.\nCorresponds to GAMSO categories 3.4 Manage IT and 3.6 Manage information and knowledge."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/705> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/705/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/705/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Data exchange and data sharing (605)\n• Metadata (601)\n• Data warehousing (609)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/706> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/706/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/706/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers management of finances, buildings and physical space, and of any other resources not covered elsewhere in the classification. Managing finances covers the use of financial and accounting information to measure, operate and predict the efficiency and effectiveness of its activities, including procurement and contracts. Managing buildings and physical space covers maintenance of the building and allocation of physical space the organization occupies, including office space.\nCorresponds to GAMSO categories 3.2 Manage finances and 3.9 Manage buildings and physical space."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/707> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/707/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/707/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers coordination of statistical activities across international and supranational statistical organizations, such as work of the UN Statistical Commission, Conference of European Statisticians and the Coordinating Committee of Statistical Activities."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/708> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/708/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/708/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Covers general bilateral and multilateral capacity development and technical cooperation activities, including coordination of capacity development.\nRelates to GAMSO category 2 Capability management but is wider. GAMSO is focused on a view within a statistical organization while this area covers mainly international capacity development assistance offered by different kinds of donors (funds, countries, international organizations, etc.)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/708> xkos:exclusionNote <http://classif-mcp.local/unsd/csa2/708/note/exclusionNote> .
+<http://classif-mcp.local/unsd/csa2/708/note/exclusionNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "Excludes:\n• Capacity development in specific subject areas (given under the relevant areas in other domains)."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .
+
+<http://classif-mcp.local/unsd/csa2/799> xkos:coreContentNote <http://classif-mcp.local/unsd/csa2/799/note/coreContentNote> .
+<http://classif-mcp.local/unsd/csa2/799/note/coreContentNote> a xkos:ExplanatoryNote ;
+    xkos:plainText "A residual category for any strategic and managerial activities that cannot be classified under the areas above."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx> ;
+    skos:editorialNote "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."@en .

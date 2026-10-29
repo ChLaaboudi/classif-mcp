@@ -47,11 +47,12 @@ schemes = [
 # A Cellar HS item is the CN item of the same code: {code} + "000080" under the CN graph.
 [endpoints.unsd]
 type = "file"
-label = "UNSD files, converted live (ISIC Rev. 5, CPC Ver. 3.0, SITC Rev. 4, and correspondence tables)"
+label = "UNSD files, converted live (ISIC Rev. 5, CPC Ver. 3.0, SITC Rev. 4, CSA 2.0, and correspondence tables)"
 level = "world"
 provenance = "converted live from the UNSD file (not official linked data; see dct:source)"
 refresh_hours = 24
 uri_prefixes = ["http://classif-mcp.local/unsd/isic", "http://classif-mcp.local/unsd/cpc",
+                "http://classif-mcp.local/unsd/csa",
                 "http://classif-mcp.local/unsd/sitc", "http://classif-mcp.local/unsd/correspondence/"]
 
 [[endpoints.unsd.sources]]
@@ -81,6 +82,35 @@ required_columns = ["ISIC Rev 5 Code (with Section)", "ISIC Rev 5 Includes", "IS
 min_items = 800
 prov_note = "Explanatory notes as updated by UNSD on 19 August 2026 (pre-edited version of the ISIC Rev. 5 publication). Converted by classif-mcp; check against the source file."
 fallback = "data/isic-rev5-notes.ttl"
+
+# Classification of Statistical Activities, CSA 2.0 (endorsed by the UN Statistical
+# Commission, 54th session, 2023; custodian UNSD). Not part of the integrated system of
+# economic classifications: added on request. Domains are published as "Domain 1" ...
+# "Domain 7"; key_regex keeps the digit for the URI (.../csa2/1), the code stays as notation.
+[[endpoints.unsd.sources]]
+url = "https://unstats.un.org/unsd/classifications/CSA2/CSA2_Structure.xlsx"
+id = "csa2"
+label = "CSA 2.0"
+code_col = "Code"
+label_col = "Title"
+key_regex = "^(?:Domain\\s*)?(\\S+)$"
+required_columns = ["Code", "Title"]
+min_items = 100
+fallback = "data/csa2.ttl"
+
+[[endpoints.unsd.sources]]
+url = "https://unstats.un.org/unsd/classifications/CSA2/CSA2_Exp_Notes.xlsx"
+id = "csa2-notes"
+label = "CSA 2.0 explanatory notes (UNSD)"
+mode = "notes"
+scheme_id = "csa2"
+code_col = "Code"
+key_regex = "^(?:Domain\\s*)?(\\S+)$"
+notes = { "Coverage" = "core", "Exclusions" = "exclusion" }
+required_columns = ["Code", "Coverage", "Exclusions"]
+min_items = 100
+prov_note = "Explanatory notes of CSA 2.0 as published by UNSD. Converted by classif-mcp; check against the source file."
+fallback = "data/csa2-notes.ttl"
 
 [[endpoints.unsd.sources]]
 url = "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/CPC_Ver_3.0_Structure_30Jun2025.csv"

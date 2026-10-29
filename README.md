@@ -12,6 +12,7 @@ It queries each node at its source and reports, for every link, where that link 
 | World | ISIC Rev. 5 (with its explanatory notes), CPC Ver. 3.0, SITC Rev. 4, and the tables ISIC Rev. 4 → Rev. 5, CPC 2.1 → HS 2017, HS 2022 ↔ HS 2017 and HS 2022 → SITC Rev. 4 | UNSD files, converted live | 2 | `unsd` |
 | World / EU | HS 2022 and HS 2017 (published inside the CN 2026 and CN 2017 graphs) | Cellar, SPARQL | 1 | `cellar` |
 | EU | NACE Rev. 2.1 and Rev. 2, CPA 2.2 and 2.1, PRODCOM 2026, CN 2026 | Cellar (EU Vocabularies), SPARQL | 1 | `cellar` |
+| World (statistical activities) | CSA 2.0, Classification of Statistical Activities, with its explanatory notes (added on request; not part of the integrated system of economic classifications) | UNSD files, converted live | 2 | `unsd` |
 | National (FR) | NAF 2025, NAF rév. 2, CPF rév. 2.1, and the national product lists for production surveys: EAP 2025 (annual survey) and EMB 2026 (monthly branch surveys) | INSEE, SPARQL | 1 | `insee` |
 | National (CH) | NOGA 2025 | FSO code list on I14Y, converted live | 2 | `i14y` |
 
@@ -105,6 +106,7 @@ fallback = "data/isic-rev5.ttl"
 ```
 
 Each source accepts the same options as the `classif-unsd` command, written as TOML keys rather than `--options`:
+- `key_regex`: a regular expression whose first group is the part of the code used in the URI (CSA: `^(?:Domain\s*)?(\S+)$`);
 - `mode`, which is `scheme`, `correspondence` or `notes` (explanatory notes only, attached to a scheme converted from another file: `scheme_id` names that scheme, `strip_section = true` turns codes such as A0111 into 0111);
 - `code_col`, `label_col` and `parent_col`;
 - `source_col`, `target_col` and `note_col`;
@@ -337,6 +339,7 @@ Endpoints are declared in `endpoints.toml`:
 
 **UNSD files**, converted live:
 - ISIC Rev. 5: 830 items, with a complete hierarchy.
+- CSA 2.0: 105 items (7 domains, 65 activities at 3 digits, 33 at 5 digits) from `CSA2_Structure.xlsx`, and 101 items with notes from `CSA2_Exp_Notes.xlsx` (Coverage → `xkos:coreContentNote`, Exclusions → `xkos:exclusionNote`). Domains are published as "Domain 1" … "Domain 7"; `key_regex` gives them the URIs `…/csa2/1` … `…/csa2/7` and keeps the published code as `skos:notation`. The hierarchy follows the codes (604 → 60405). UNSD also publishes a CSA Rev. 1 ↔ 2.0 table (`CSA_1-2_Correspondences.xlsx`), not loaded.
 - ISIC Rev. 5 explanatory notes: from `ISIC5_Exp_Notes_19_Aug_2026.xlsx`, attached to the same 830 items (`mode = "notes"`). Includes → `xkos:coreContentNote`, Includes also → `xkos:additionalContentNote`, Excludes → `xkos:exclusionNote`, Introductory text → `skos:scopeNote`. Each note carries its own `dct:source`. The file's Notes sheet says the notes were endorsed with ISIC Rev. 5 in 2024 and updated on 19 August 2026 (scope clarifications, typographical corrections; pre-edited publication). Example: class 3092 now names electric assisted bicycles in its "also includes" note.
 - CPC Ver. 3.0: 4,586 items.
 - SITC Rev. 4: 4,011 items, from `SITCCodeandDescription.xlsx`, sheet SITC4, with an explicit Parent Code column.

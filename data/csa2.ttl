@@ -1,0 +1,640 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xkos: <http://rdf-vocabulary.ddialliance.org/xkos#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+
+<http://classif-mcp.local/unsd/csa2/scheme> a skos:ConceptScheme ;
+    skos:prefLabel "CSA 2.0"@en ;
+    skos:note "Classification converted from a published file by classif-mcp. Not an official linked-data publication; check against the source file."@en ;
+    dct:source <https://unstats.un.org/unsd/classifications/CSA2/CSA2_Structure.xlsx> .
+
+<http://classif-mcp.local/unsd/csa2/1> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "Domain 1" ;
+    skos:prefLabel "Demographic and social statistics"@en ;
+    skos:topConceptOf <http://classif-mcp.local/unsd/csa2/scheme> .
+
+<http://classif-mcp.local/unsd/csa2/101> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "101" ;
+    skos:prefLabel "Population"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/1> .
+
+<http://classif-mcp.local/unsd/csa2/102> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "102" ;
+    skos:prefLabel "Migration"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/1> .
+
+<http://classif-mcp.local/unsd/csa2/103> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "103" ;
+    skos:prefLabel "Labour"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/1> .
+
+<http://classif-mcp.local/unsd/csa2/104> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "104" ;
+    skos:prefLabel "Education"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/1> .
+
+<http://classif-mcp.local/unsd/csa2/105> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "105" ;
+    skos:prefLabel "Health"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/1> .
+
+<http://classif-mcp.local/unsd/csa2/106> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "106" ;
+    skos:prefLabel "Income and consumption"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/1> .
+
+<http://classif-mcp.local/unsd/csa2/107> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "107" ;
+    skos:prefLabel "Social protection"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/1> .
+
+<http://classif-mcp.local/unsd/csa2/108> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "108" ;
+    skos:prefLabel "Human settlements and housing"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/1> .
+
+<http://classif-mcp.local/unsd/csa2/109> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "109" ;
+    skos:prefLabel "Culture"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/1> .
+
+<http://classif-mcp.local/unsd/csa2/110> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "110" ;
+    skos:prefLabel "Time-Use"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/1> .
+
+<http://classif-mcp.local/unsd/csa2/199> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "199" ;
+    skos:prefLabel "Demographic and social statistics, n.e.c."@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/1> .
+
+<http://classif-mcp.local/unsd/csa2/2> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "Domain 2" ;
+    skos:prefLabel "Economic statistics"@en ;
+    skos:topConceptOf <http://classif-mcp.local/unsd/csa2/scheme> .
+
+<http://classif-mcp.local/unsd/csa2/201> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "201" ;
+    skos:prefLabel "Macroeconomic accounts and statistics"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/2> .
+
+<http://classif-mcp.local/unsd/csa2/20101> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20101" ;
+    skos:prefLabel "System of National Accounts"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/201> .
+
+<http://classif-mcp.local/unsd/csa2/20102> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20102" ;
+    skos:prefLabel "Balance of payments and international investment position"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/201> .
+
+<http://classif-mcp.local/unsd/csa2/20103> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20103" ;
+    skos:prefLabel "Government finance statistics"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/201> .
+
+<http://classif-mcp.local/unsd/csa2/20104> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20104" ;
+    skos:prefLabel "Monetary and financial statistics"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/201> .
+
+<http://classif-mcp.local/unsd/csa2/20105> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20105" ;
+    skos:prefLabel "System of Environmental-Economic Accounting"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/201> .
+
+<http://classif-mcp.local/unsd/csa2/20199> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20199" ;
+    skos:prefLabel "Macroeconomic accounts and statistics, n.e.c."@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/201> .
+
+<http://classif-mcp.local/unsd/csa2/202> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "202" ;
+    skos:prefLabel "Business statistics"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/2> .
+
+<http://classif-mcp.local/unsd/csa2/20201> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20201" ;
+    skos:prefLabel "Short-term business statistics"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/202> .
+
+<http://classif-mcp.local/unsd/csa2/20202> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20202" ;
+    skos:prefLabel "Structural business statistics"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/202> .
+
+<http://classif-mcp.local/unsd/csa2/20203> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20203" ;
+    skos:prefLabel "Business demography and business dynamics"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/202> .
+
+<http://classif-mcp.local/unsd/csa2/20204> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20204" ;
+    skos:prefLabel "Entrepreneurship"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/202> .
+
+<http://classif-mcp.local/unsd/csa2/20205> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20205" ;
+    skos:prefLabel "Multinational enterprise statistics"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/202> .
+
+<http://classif-mcp.local/unsd/csa2/20299> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20299" ;
+    skos:prefLabel "Business statistics, n.e.c."@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/202> .
+
+<http://classif-mcp.local/unsd/csa2/203> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "203" ;
+    skos:prefLabel "Sectoral statistics"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/2> .
+
+<http://classif-mcp.local/unsd/csa2/20301> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20301" ;
+    skos:prefLabel "Agriculture, forestry and fishing"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/203> .
+
+<http://classif-mcp.local/unsd/csa2/20302> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20302" ;
+    skos:prefLabel "Energy"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/203> .
+
+<http://classif-mcp.local/unsd/csa2/20303> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20303" ;
+    skos:prefLabel "Mining, manufacturing and construction"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/203> .
+
+<http://classif-mcp.local/unsd/csa2/20304> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20304" ;
+    skos:prefLabel "Transport"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/203> .
+
+<http://classif-mcp.local/unsd/csa2/20305> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20305" ;
+    skos:prefLabel "Tourism"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/203> .
+
+<http://classif-mcp.local/unsd/csa2/20306> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20306" ;
+    skos:prefLabel "Banking, insurance and financial market statistics"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/203> .
+
+<http://classif-mcp.local/unsd/csa2/20307> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20307" ;
+    skos:prefLabel "Wholesale and retail trade"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/203> .
+
+<http://classif-mcp.local/unsd/csa2/20399> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "20399" ;
+    skos:prefLabel "Sectoral statistics, n.e.c."@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/203> .
+
+<http://classif-mcp.local/unsd/csa2/204> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "204" ;
+    skos:prefLabel "International trade"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/2> .
+
+<http://classif-mcp.local/unsd/csa2/205> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "205" ;
+    skos:prefLabel "Prices"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/2> .
+
+<http://classif-mcp.local/unsd/csa2/206> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "206" ;
+    skos:prefLabel "Science, technology and innovation"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/2> .
+
+<http://classif-mcp.local/unsd/csa2/299> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "299" ;
+    skos:prefLabel "Economic statistics, n.e.c."@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/2> .
+
+<http://classif-mcp.local/unsd/csa2/3> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "Domain 3" ;
+    skos:prefLabel "Environment statistics"@en ;
+    skos:topConceptOf <http://classif-mcp.local/unsd/csa2/scheme> .
+
+<http://classif-mcp.local/unsd/csa2/301> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "301" ;
+    skos:prefLabel "Environmental conditions and quality"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/3> .
+
+<http://classif-mcp.local/unsd/csa2/302> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "302" ;
+    skos:prefLabel "Environmental resources and their use"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/3> .
+
+<http://classif-mcp.local/unsd/csa2/303> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "303" ;
+    skos:prefLabel "Residuals"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/3> .
+
+<http://classif-mcp.local/unsd/csa2/304> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "304" ;
+    skos:prefLabel "Hazardous events and disasters"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/3> .
+
+<http://classif-mcp.local/unsd/csa2/305> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "305" ;
+    skos:prefLabel "Human settlements and environmental health"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/3> .
+
+<http://classif-mcp.local/unsd/csa2/306> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "306" ;
+    skos:prefLabel "Environmental protection, management and engagement"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/3> .
+
+<http://classif-mcp.local/unsd/csa2/399> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "399" ;
+    skos:prefLabel "Environment statistics, n.e.c."@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/3> .
+
+<http://classif-mcp.local/unsd/csa2/4> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "Domain 4" ;
+    skos:prefLabel "Governance statistics"@en ;
+    skos:topConceptOf <http://classif-mcp.local/unsd/csa2/scheme> .
+
+<http://classif-mcp.local/unsd/csa2/401> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "401" ;
+    skos:prefLabel "Non-discrimination and equality"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/4> .
+
+<http://classif-mcp.local/unsd/csa2/402> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "402" ;
+    skos:prefLabel "Participation"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/4> .
+
+<http://classif-mcp.local/unsd/csa2/403> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "403" ;
+    skos:prefLabel "Openness"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/4> .
+
+<http://classif-mcp.local/unsd/csa2/404> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "404" ;
+    skos:prefLabel "Access to and quality of justice"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/4> .
+
+<http://classif-mcp.local/unsd/csa2/405> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "405" ;
+    skos:prefLabel "Responsiveness"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/4> .
+
+<http://classif-mcp.local/unsd/csa2/406> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "406" ;
+    skos:prefLabel "Absence of corruption"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/4> .
+
+<http://classif-mcp.local/unsd/csa2/407> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "407" ;
+    skos:prefLabel "Trust"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/4> .
+
+<http://classif-mcp.local/unsd/csa2/408> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "408" ;
+    skos:prefLabel "Safety and security"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/4> .
+
+<http://classif-mcp.local/unsd/csa2/40801> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "40801" ;
+    skos:prefLabel "Crime and criminal justice"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/408> .
+
+<http://classif-mcp.local/unsd/csa2/40899> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "40899" ;
+    skos:prefLabel "Safety and security statistics, n.e.c."@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/408> .
+
+<http://classif-mcp.local/unsd/csa2/499> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "499" ;
+    skos:prefLabel "Governance statistics, n.e.c."@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/4> .
+
+<http://classif-mcp.local/unsd/csa2/5> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "Domain 5" ;
+    skos:prefLabel "Cross-cutting statistics"@en ;
+    skos:topConceptOf <http://classif-mcp.local/unsd/csa2/scheme> .
+
+<http://classif-mcp.local/unsd/csa2/501> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "501" ;
+    skos:prefLabel "Sustainable development"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/5> .
+
+<http://classif-mcp.local/unsd/csa2/502> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "502" ;
+    skos:prefLabel "Human rights"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/5> .
+
+<http://classif-mcp.local/unsd/csa2/503> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "503" ;
+    skos:prefLabel "Gender statistics"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/5> .
+
+<http://classif-mcp.local/unsd/csa2/504> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "504" ;
+    skos:prefLabel "Special population groups"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/5> .
+
+<http://classif-mcp.local/unsd/csa2/505> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "505" ;
+    skos:prefLabel "Living conditions and poverty"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/5> .
+
+<http://classif-mcp.local/unsd/csa2/506> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "506" ;
+    skos:prefLabel "Climate change"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/5> .
+
+<http://classif-mcp.local/unsd/csa2/507> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "507" ;
+    skos:prefLabel "Regional and small area statistics"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/5> .
+
+<http://classif-mcp.local/unsd/csa2/508> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "508" ;
+    skos:prefLabel "Information society and digitalization"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/5> .
+
+<http://classif-mcp.local/unsd/csa2/509> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "509" ;
+    skos:prefLabel "Circular economy"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/5> .
+
+<http://classif-mcp.local/unsd/csa2/510> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "510" ;
+    skos:prefLabel "Social and solidarity economy"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/5> .
+
+<http://classif-mcp.local/unsd/csa2/599> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "599" ;
+    skos:prefLabel "Cross-cutting statistics, n.e.c."@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/5> .
+
+<http://classif-mcp.local/unsd/csa2/6> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "Domain 6" ;
+    skos:prefLabel "Statistical infrastructure and methodology"@en ;
+    skos:topConceptOf <http://classif-mcp.local/unsd/csa2/scheme> .
+
+<http://classif-mcp.local/unsd/csa2/601> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "601" ;
+    skos:prefLabel "Metadata"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/6> .
+
+<http://classif-mcp.local/unsd/csa2/602> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "602" ;
+    skos:prefLabel "Classifications"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/6> .
+
+<http://classif-mcp.local/unsd/csa2/603> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "603" ;
+    skos:prefLabel "Statistical registers"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/6> .
+
+<http://classif-mcp.local/unsd/csa2/60301> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "60301" ;
+    skos:prefLabel "Statistical business registers"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/603> .
+
+<http://classif-mcp.local/unsd/csa2/60302> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "60302" ;
+    skos:prefLabel "Registers of population"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/603> .
+
+<http://classif-mcp.local/unsd/csa2/60303> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "60303" ;
+    skos:prefLabel "Registers of dwellings and buildings"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/603> .
+
+<http://classif-mcp.local/unsd/csa2/60304> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "60304" ;
+    skos:prefLabel "Agricultural registers"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/603> .
+
+<http://classif-mcp.local/unsd/csa2/60399> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "60399" ;
+    skos:prefLabel "Statistical registers, n.e.c."@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/603> .
+
+<http://classif-mcp.local/unsd/csa2/604> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "604" ;
+    skos:prefLabel "Data sources"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/6> .
+
+<http://classif-mcp.local/unsd/csa2/60401> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "60401" ;
+    skos:prefLabel "Population and housing censuses"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/604> .
+
+<http://classif-mcp.local/unsd/csa2/60402> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "60402" ;
+    skos:prefLabel "Business and agricultural censuses"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/604> .
+
+<http://classif-mcp.local/unsd/csa2/60403> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "60403" ;
+    skos:prefLabel "Household and individual surveys"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/604> .
+
+<http://classif-mcp.local/unsd/csa2/60404> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "60404" ;
+    skos:prefLabel "Business and agricultural surveys"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/604> .
+
+<http://classif-mcp.local/unsd/csa2/60405> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "60405" ;
+    skos:prefLabel "Administrative sources"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/604> .
+
+<http://classif-mcp.local/unsd/csa2/60499> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "60499" ;
+    skos:prefLabel "Data sources, n.e.c."@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/604> .
+
+<http://classif-mcp.local/unsd/csa2/605> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "605" ;
+    skos:prefLabel "Data exchange and data sharing"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/6> .
+
+<http://classif-mcp.local/unsd/csa2/606> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "606" ;
+    skos:prefLabel "Data processing and analysis"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/6> .
+
+<http://classif-mcp.local/unsd/csa2/607> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "607" ;
+    skos:prefLabel "Data science"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/6> .
+
+<http://classif-mcp.local/unsd/csa2/608> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "608" ;
+    skos:prefLabel "Geospatial data"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/6> .
+
+<http://classif-mcp.local/unsd/csa2/609> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "609" ;
+    skos:prefLabel "Statistical confidentiality and disclosure protection"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/6> .
+
+<http://classif-mcp.local/unsd/csa2/610> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "610" ;
+    skos:prefLabel "Data dissemination and communication"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/6> .
+
+<http://classif-mcp.local/unsd/csa2/699> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "699" ;
+    skos:prefLabel "Statistical infrastructure and methodology, n.e.c."@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/6> .
+
+<http://classif-mcp.local/unsd/csa2/7> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "Domain 7" ;
+    skos:prefLabel "Strategic and managerial activities"@en ;
+    skos:topConceptOf <http://classif-mcp.local/unsd/csa2/scheme> .
+
+<http://classif-mcp.local/unsd/csa2/701> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "701" ;
+    skos:prefLabel "Institutional frameworks and principles; role and organization of official statistics"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/7> .
+
+<http://classif-mcp.local/unsd/csa2/702> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "702" ;
+    skos:prefLabel "National statistical coordination"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/7> .
+
+<http://classif-mcp.local/unsd/csa2/703> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "703" ;
+    skos:prefLabel "Quality management"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/7> .
+
+<http://classif-mcp.local/unsd/csa2/704> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "704" ;
+    skos:prefLabel "Management of human resources"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/7> .
+
+<http://classif-mcp.local/unsd/csa2/705> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "705" ;
+    skos:prefLabel "Management of IT, information and knowledge"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/7> .
+
+<http://classif-mcp.local/unsd/csa2/706> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "706" ;
+    skos:prefLabel "Management of other resources"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/7> .
+
+<http://classif-mcp.local/unsd/csa2/707> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "707" ;
+    skos:prefLabel "International statistical coordination"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/7> .
+
+<http://classif-mcp.local/unsd/csa2/708> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "708" ;
+    skos:prefLabel "Capacity development"@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/7> .
+
+<http://classif-mcp.local/unsd/csa2/799> a skos:Concept ;
+    skos:inScheme <http://classif-mcp.local/unsd/csa2/scheme> ;
+    skos:notation "799" ;
+    skos:prefLabel "Strategic and managerial activities, n.e.c."@en ;
+    skos:broader <http://classif-mcp.local/unsd/csa2/7> .

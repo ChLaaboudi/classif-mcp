@@ -252,11 +252,23 @@ def provenance(source_url: str | None, what: str, note: str | None = None) -> st
     return out
 
 
+def _key_source(code: str, key_regex: str | None) -> str:
+    """The part of a published code used in the URI, e.g. key_regex "^(?:Domain\\s*)?(\\S+)$"
+    turns CSA's "Domain 1" into "1" (the published code is kept as skos:notation)."""
+    code = " ".join(code.split())
+    if key_regex:
+        m = re.search(key_regex, code)
+        if m:
+            return m.group(1)
+    return code
+
+
 def build_scheme(rows, code_i, label_i, base, sid, label, lang, source_url,
                  parent_i: int | None = None, key_style: str = "compact",
                  prov_note: str | None = None, key_i: int | None = None, note_i: int | None = None,
                  scheme_extra: str = "", notes: list[tuple] | None = None,
-                 labels: list[tuple[int, str]] | None = None) -> tuple[str, int]:
+                 labels: list[tuple[int, str]] | None = None,
+                 key_regex: str | None = None) -> tuple[str, int]:
     """key_i: column holding an explicit URI key (used when the source prints the
     same code twice); note_i: column written as skos:editorialNote on each item;
     scheme_extra: extra Turtle predicate-object lines for the scheme;
@@ -273,7 +285,7 @@ def build_scheme(rows, code_i, label_i, base, sid, label, lang, source_url,
             continue
         code = r[code_i].strip()
         k = (r[key_i].strip() if key_i is not None and len(r) > key_i and r[key_i].strip()
-             else code_key(code, key_style))
+             else code_key(_key_source(code, key_regex), key_style))
         if not k:
             continue
         title = strip_code_prefix(r[label_i].strip(), code)
@@ -291,7 +303,7 @@ def build_scheme(rows, code_i, label_i, base, sid, label, lang, source_url,
     for k, code, title, praw, note, xnotes, xlabels in items:
         parent = None
         if parent_i is not None:
-            pk = code_key(praw, key_style)
+            pk = code_key(_key_source(praw, key_regex), key_style)
             parent = pk if pk in keys and pk != k else None
         elif key_style == "dotted":
             segs = k.split(".")
@@ -327,7 +339,7 @@ def build_scheme(rows, code_i, label_i, base, sid, label, lang, source_url,
 
 def build_notes(rows, code_i, notes, base, scheme_id, lang, source_url,
                 key_style: str = "compact", strip_section: bool = False,
-                prov_note: str | None = None) -> tuple[str, int]:
+                prov_note: str | None = None, key_regex: str | None = None) -> tuple[str, int]:
     """Explanatory notes only, attached to the items of a scheme converted from another
     file (same URIs: base + scheme_id + code). Each note records its own source, so the
     structure and the notes can come from different files and dates.
@@ -341,7 +353,7 @@ def build_notes(rows, code_i, notes, base, scheme_id, lang, source_url,
         code = r[code_i].strip()
         if strip_section:
             code = re.sub(r"^[A-Z](?=\d)", "", code)
-        k = code_key(code, key_style)
+        k = code_key(_key_source(code, key_regex), key_style)
         uri = f"<{base}{scheme_id}/{k}>"
         written = False
         for ci, prop, nlang in notes:
@@ -404,7 +416,8 @@ def convert(path: Path, mode: str = "scheme", *, id: str, label: str, lang: str 
             source_url: str | None = None, prov_note: str | None = None,
             notes=None, skip_codes=None, labels=None, header_row: int | None = None,
             source_suffix: str = "", target_suffix: str = "",
-            scheme_id: str | None = None, strip_section: bool = False) -> tuple[str, int, str]:
+            scheme_id: str | None = None, strip_section: bool = False,
+            key_regex: str | None = None) -> tuple[str, int, str]:
     """Convert one file to Turtle. Returns (turtle, number of items or links, description).
     Used by the classif-unsd command and by live "file" endpoints in the server."""
     try:
@@ -434,7 +447,8 @@ def convert(path: Path, mode: str = "scheme", *, id: str, label: str, lang: str 
                     info += (f"\nWARNING: {n_orph} items name a parent that is not in the file "
                              f"({', '.join(missing[:10])}); they are kept at the top level, as published.")
             ttl, n = build_scheme(rows, ci, li, base.rstrip("/") + "/", id, label, lang, source_url,
-                                  pi, key_style, prov_note, notes=note_cols, labels=label_cols)
+                                  pi, key_style, prov_note, notes=note_cols, labels=label_cols,
+                                  key_regex=key_regex)
         elif mode == "notes":  # explanatory notes for a scheme converted from another file
             ci = pick(header, code_col, [r"code"])
             note_cols = parse_notes(notes, header, lang)
@@ -443,7 +457,7 @@ def convert(path: Path, mode: str = "scheme", *, id: str, label: str, lang: str 
             info = (f"header={header}\ncode={header[ci]!r} scheme={scheme_id or id!r} "
                     f"notes={[(header[c], p, l) for c, p, l in note_cols]} rows={len(rows)}")
             ttl, n = build_notes(rows, ci, note_cols, base.rstrip("/") + "/", scheme_id or id, lang,
-                                 source_url, key_style, strip_section, prov_note)
+                                 source_url, key_style, strip_section, prov_note, key_regex)
         elif mode == "correspondence":
             if not (source_base and target_base):
                 raise ConversionError("source_base and target_base are required for a correspondence")
